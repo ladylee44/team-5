@@ -1,7 +1,7 @@
-package com.smartosc.user.repository;
+package com.smartosc.user.repositories;
 
-import com.smartosc.user.entity.Role;
-import com.smartosc.user.entity.RoleName;
+import com.smartosc.user.entities.Role;
+import com.smartosc.user.entities.RoleName;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

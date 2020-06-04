@@ -1,6 +1,6 @@
-package com.smartosc.user.repository;
+package com.smartosc.user.repositories;
 
-import com.smartosc.user.entity.User;
+import com.smartosc.user.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

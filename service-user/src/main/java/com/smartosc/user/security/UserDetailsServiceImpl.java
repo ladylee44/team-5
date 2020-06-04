@@ -1,7 +1,7 @@
 package com.smartosc.user.security;
 
-import com.smartosc.user.entity.User;
-import com.smartosc.user.repository.UserRepository;
+import com.smartosc.user.entities.User;
+import com.smartosc.user.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

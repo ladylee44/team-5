@@ -1,4 +1,4 @@
-package com.smartosc.user.entity;
+package com.smartosc.user.entities;
 
 import lombok.Data;
 import org.hibernate.annotations.NaturalId;

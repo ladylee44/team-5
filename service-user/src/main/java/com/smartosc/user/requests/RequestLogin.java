@@ -1,4 +1,4 @@
-package com.smartosc.user.request;
+package com.smartosc.user.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

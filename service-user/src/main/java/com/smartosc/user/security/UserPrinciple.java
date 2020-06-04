@@ -1,7 +1,7 @@
 package com.smartosc.user.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.smartosc.user.entity.User;
+import com.smartosc.user.entities.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

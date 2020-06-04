@@ -1,12 +1,12 @@
-package com.smartosc.user.controller;
+package com.smartosc.user.controllers;
 
-import com.smartosc.user.entity.Role;
-import com.smartosc.user.entity.RoleName;
-import com.smartosc.user.entity.User;
-import com.smartosc.user.repository.RoleRepository;
-import com.smartosc.user.repository.UserRepository;
-import com.smartosc.user.request.RequestLogin;
-import com.smartosc.user.request.RequestSignup;
+import com.smartosc.user.entities.Role;
+import com.smartosc.user.entities.RoleName;
+import com.smartosc.user.entities.User;
+import com.smartosc.user.repositories.RoleRepository;
+import com.smartosc.user.repositories.UserRepository;
+import com.smartosc.user.requests.RequestLogin;
+import com.smartosc.user.requests.RequestSignup;
 import com.smartosc.user.security.JwtProvider;
 import com.smartosc.user.security.JwtResponse;
 import org.springframework.beans.factory.annotation.Autowired;

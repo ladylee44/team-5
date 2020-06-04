@@ -1,4 +1,4 @@
-package com.smartosc.user.entity;
+package com.smartosc.user.entities;
 
 /**
  * Team5HuuAndThao
