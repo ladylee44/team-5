@@ -1,6 +1,6 @@
 package com.smartosc.team5.entities;
 
-import com.smartosc.team5.validate.annotation.ValidPrice;
+import com.smartosc.common.validate.annotation.ValidPrice;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,8 +40,8 @@ public class Product implements Serializable {
     @Column(name = "description", length = 255)
     private String description;
 
-    @ValidPrice
     @Column(name = "price", precision = 20, scale = 3)
+    @ValidPrice
     private double price;
 
     @CreationTimestamp

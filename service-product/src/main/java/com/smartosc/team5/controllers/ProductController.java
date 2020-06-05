@@ -1,12 +1,12 @@
-package com.smartosc.team5.controller;
+package com.smartosc.team5.controllers;
 
 import com.smartosc.common.dto.ProductDTO;
-import com.smartosc.team5.entities.Product;
 import com.smartosc.team5.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -22,6 +22,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/products")
+@Validated
 public class ProductController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductController.class);
@@ -41,7 +42,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO) {
+    public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO productDTO) {
         ProductDTO productCreate = productService.addProduct(productDTO);
         return ResponseEntity.ok().body(productCreate);
     }

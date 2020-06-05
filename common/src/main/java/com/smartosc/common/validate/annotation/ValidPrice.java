@@ -1,13 +1,10 @@
-package com.smartosc.team5.validate.annotation;
+package com.smartosc.common.validate.annotation;
 
-import com.smartosc.team5.validate.PriceContraintValidator;
+import com.smartosc.common.validate.PriceContraintValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Team5
@@ -19,6 +16,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = PriceContraintValidator.class)
+@Documented
 public @interface ValidPrice {
     String message() default "Invalid price";
     Class<?>[] groups() default {};

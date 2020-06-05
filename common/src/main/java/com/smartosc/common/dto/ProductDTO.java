@@ -1,9 +1,12 @@
 package com.smartosc.common.dto;
 
+import com.smartosc.common.validate.annotation.ValidPrice;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * team5
@@ -19,8 +22,10 @@ import lombok.Setter;
 @Setter
 public class ProductDTO {
     private int productId;
+    @NotNull
     private String productName;
     private String image;
     private String description;
+    @ValidPrice
     private double price;
 }

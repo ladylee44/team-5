@@ -1,6 +1,6 @@
-package com.smartosc.team5.validate;
+package com.smartosc.common.validate;
 
-import com.smartosc.team5.validate.annotation.ValidPrice;
+import com.smartosc.common.validate.annotation.ValidPrice;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -12,16 +12,15 @@ import javax.validation.ConstraintValidatorContext;
  * @created_at 04/06/2020 - 2:17 PM
  * @created_by Huupd
  */
-public class PriceContraintValidator implements ConstraintValidator<ValidPrice,Integer> {
+public class PriceContraintValidator implements ConstraintValidator<ValidPrice, Double> {
 
 
     @Override
     public void initialize(ValidPrice constraintAnnotation) {
-
     }
 
     @Override
-    public boolean isValid(Integer value, ConstraintValidatorContext context) {
+    public boolean isValid(Double value, ConstraintValidatorContext context) {
         return value != null && (value > 0 && value < 99999999);
     }
 }

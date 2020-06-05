@@ -1,7 +1,7 @@
 package com.smartosc.team5.service;
 
 import com.smartosc.common.dto.ProductDTO;
-import com.smartosc.team5.convert.Convert;
+import com.smartosc.team5.converts.Convert;
 import com.smartosc.team5.entities.Product;
 import com.smartosc.team5.repositories.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
