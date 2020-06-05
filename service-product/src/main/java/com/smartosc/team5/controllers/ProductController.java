@@ -111,8 +111,15 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ProductDTO> deleteProduct(@PathVariable(value = "id") Integer id) {
         log.info("Delete product id " + id);
-        productService.deleteProduct(id);
-        log.info("Delete product successfully");
-        return ResponseEntity.ok().build();
+        if(productService.findById(id).equals(null)){
+            log.info("Product not found");
+            throw new ProductNotFoundException(id);
+        } else {
+            productService.deleteProduct(id);
+            log.info("Delete product successfully");
+            return ResponseEntity.ok().build();
+        }
+
+
     }
 }
