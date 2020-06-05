@@ -1,8 +1,9 @@
 package com.smartosc.team5.service;
 
-import com.smartosc.common.dto.ProductDTO;
-import com.smartosc.team5.converts.Convert;
+import com.smartosc.team5.dto.ProductDTO;
+import com.smartosc.team5.converts.ProductConvert;
 import com.smartosc.team5.entities.Product;
+import com.smartosc.team5.exception.ProductNotFoundException;
 import com.smartosc.team5.repositories.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,40 +24,45 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class ProductService {
-    @Autowired
+
     private ProductRepository productRepository;
 
-    public List<ProductDTO> getAllProducts(){
+    @Autowired
+    public ProductService(ProductRepository productRepository){
+        this.productRepository = productRepository;
+    }
+
+    public List<ProductDTO> getAllProducts() {
         log.info("Get all products");
         List<Product> productList = productRepository.findAll();
         List<ProductDTO> productDTOList = new ArrayList<>();
-        productList.forEach(p->{
-            ProductDTO productDTO = Convert.convertProductToDTO(p);
+        productList.forEach(p -> {
+            ProductDTO productDTO = ProductConvert.convertProductToDTO(p);
             productDTOList.add(productDTO);
         });
         return productDTOList;
     }
 
-    public ProductDTO addProduct(ProductDTO productDTO){
+    public ProductDTO findById(int id) {
+        log.info("Find product by id " + id);
+        Optional<Product> productOptional = productRepository.findById(id);
+        if (productOptional.isPresent()) {
+            return ProductConvert.convertProductToDTO(productOptional.get());
+        } else
+            throw new ProductNotFoundException(id);
+    }
+
+    public ProductDTO addProduct(ProductDTO productDTO) {
         log.info("Create a new product");
-        Product productCreate = productRepository.save(Convert.convertProductDTOtoProduct(productDTO));
+        Product productCreate = productRepository.save(ProductConvert.convertProductDTOtoProduct(productDTO));
         productDTO.setProductId(productCreate.getProductId());
         return productDTO;
     }
 
-    public ProductDTO findById(int id){
-        log.info("Find product by Id");
-        Optional<Product> productOptional = productRepository.findById(id);
-        if(productOptional.isPresent()){
-            return Convert.convertProductToDTO(productOptional.get());
-        } else
-        return null;
-    }
-
-    public ProductDTO updateProduct(ProductDTO productDTO, Integer id){
+    public ProductDTO updateProduct(ProductDTO productDTO, Integer id) {
         log.info("Update product");
         ProductDTO updateProduct = findById(id);
-        Product product = Convert.convertProductDTOtoProduct(productDTO);
+        Product product = ProductConvert.convertProductDTOtoProduct(productDTO);
         productRepository.save(product);
         updateProduct.setProductId(productDTO.getProductId());
         return productDTO;

@@ -1,6 +1,6 @@
 package com.smartosc.team5.controllers;
 
-import com.smartosc.common.dto.OrderDTO;
+import com.smartosc.team5.dto.OrderDTO;
 import com.smartosc.team5.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

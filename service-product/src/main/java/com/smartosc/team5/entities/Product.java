@@ -1,6 +1,6 @@
 package com.smartosc.team5.entities;
 
-import com.smartosc.common.validate.annotation.ValidPrice;
+import com.smartosc.team5.validate.annotation.ValidPrice;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

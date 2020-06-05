@@ -1,6 +1,6 @@
 package com.smartosc.team5.service;
 
-import com.smartosc.common.dto.OrderDTO;
+import com.smartosc.team5.dto.OrderDTO;
 import com.smartosc.team5.converts.OrderConvert;
 import com.smartosc.team5.entities.Order;
 import com.smartosc.team5.repositories.OrderRepository;

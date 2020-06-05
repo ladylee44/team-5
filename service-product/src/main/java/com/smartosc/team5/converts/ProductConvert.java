@@ -1,6 +1,6 @@
 package com.smartosc.team5.converts;
 
-import com.smartosc.common.dto.ProductDTO;
+import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.entities.Product;
 
 /**
@@ -11,9 +11,15 @@ import com.smartosc.team5.entities.Product;
  * @created_by ThaoPhuong
  * @since 04/06/2020
  */
-public class Convert {
+public class ProductConvert {
+    /**
+     * convert product to DTO
+     * @param product
+     * @return
+     */
     public static ProductDTO convertProductToDTO (Product product){
         ProductDTO productDTO = new ProductDTO();
+        productDTO.setProductId(product.getProductId());
         productDTO.setProductName(product.getName());
         productDTO.setImage(product.getImage());
         productDTO.setDescription(product.getDescription());
@@ -21,6 +27,11 @@ public class Convert {
         return productDTO;
     }
 
+    /**
+     * convert DTO to product entity
+     * @param productDTO
+     * @return
+     */
     public static Product convertProductDTOtoProduct(ProductDTO productDTO){
         Product product = new Product();
         product.setName(productDTO.getProductName());
