@@ -1,4 +1,4 @@
-package com.smartosc.team5.service;
+package com.smartosc.team5.services;
 
 import com.smartosc.common.dto.ProductDTO;
 import com.smartosc.team5.converts.Convert;

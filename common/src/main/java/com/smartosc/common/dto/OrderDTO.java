@@ -21,19 +21,13 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderDTO {
     private int ordersId;
-
-    private int orderNum;
-
     private double totalPrice;
-
-    private double amount;
-
     private int status;
-
     private Date createdAt;
-
     private Date updatedAt;
-
     private List<OrderdetailDTO> orderDetailEntities;
 
+
+    public OrderDTO(int i, int i1, List<OrderdetailDTO> orderdetailDTOList1) {
+    }
 }

@@ -1,7 +1,7 @@
 package com.smartosc.team5.controllers;
 
 import com.smartosc.common.dto.OrderDTO;
-import com.smartosc.team5.service.OrderService;
+import com.smartosc.team5.services.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * team5
@@ -40,7 +41,17 @@ public class OrderController {
         if (orderDTOList.isEmpty()) {
             LOGGER.info("Not found orders");
         }
+        LOGGER.info("Get all order");
         return new ResponseEntity<>(orderDTOList, HttpStatus.OK);
+    }
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<Optional<OrderDTO>> getOrderById(@PathVariable("orderId") int orderId){
+        Optional<OrderDTO> ordersDTO = orderService.findOderById(orderId);
+        if (ordersDTO.isPresent()) {
+            return new ResponseEntity<>(ordersDTO, HttpStatus.OK);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     /**

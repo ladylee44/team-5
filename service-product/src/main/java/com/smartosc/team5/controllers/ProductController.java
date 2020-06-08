@@ -1,7 +1,7 @@
 package com.smartosc.team5.controllers;
 
 import com.smartosc.common.dto.ProductDTO;
-import com.smartosc.team5.service.ProductService;
+import com.smartosc.team5.services.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import java.util.List;
  * @since 04/06/2020
  */
 @RestController
-@RequestMapping("/products")
+@RequestMapping("api/products")
 @Validated
 public class ProductController {
 
@@ -30,7 +30,7 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping("")
+    @GetMapping()
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
         List<ProductDTO> productDTOList = productService.getAllProducts();
         if (productDTOList.isEmpty()) {
