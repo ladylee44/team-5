@@ -12,8 +12,10 @@ import com.smartosc.team5.entities.OrderDetail;
  * @created_by Huupd
  */
 public class OrderDetailConvert {
-    /**Convert OrderDetailEntity to OrderDetailDTO*/
-    public OrderdetailDTO convertEntitytoDTO(OrderDetail orderDetail){
+    /**
+     * Convert OrderDetailEntity to OrderDetailDTO
+     */
+    public OrderdetailDTO convertEntitytoDTO(OrderDetail orderDetail) {
         OrderdetailDTO orderdetailDTO = new OrderdetailDTO();
         orderdetailDTO.setDeltailId(orderDetail.getDeltailId());
         orderdetailDTO.setPrice(orderDetail.getPrice());

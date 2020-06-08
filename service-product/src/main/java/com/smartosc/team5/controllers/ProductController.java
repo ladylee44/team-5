@@ -2,11 +2,8 @@ package com.smartosc.team5.controllers;
 
 import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.exception.ProductNotFoundException;
-import com.smartosc.team5.service.ProductService;
-import lombok.extern.log4j.Log4j;
+import com.smartosc.team5.services.ProductService;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -119,7 +116,5 @@ public class ProductController {
             log.info("Delete product successfully");
             return ResponseEntity.ok().build();
         }
-
-
     }
 }

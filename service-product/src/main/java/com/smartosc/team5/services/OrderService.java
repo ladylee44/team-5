@@ -1,4 +1,4 @@
-package com.smartosc.team5.service;
+package com.smartosc.team5.services;
 
 import com.smartosc.team5.dto.OrderDTO;
 import com.smartosc.team5.converts.OrderConvert;

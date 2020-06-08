@@ -1,7 +1,7 @@
 package com.smartosc.team5.controllers;
 
 import com.smartosc.team5.dto.OrderDTO;
-import com.smartosc.team5.service.OrderService;
+import com.smartosc.team5.services.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
