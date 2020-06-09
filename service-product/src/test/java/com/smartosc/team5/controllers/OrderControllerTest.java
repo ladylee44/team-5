@@ -74,18 +74,18 @@ public class OrderControllerTest {
             e.printStackTrace();
         }
     }
-//    @Test
-//    public void testGetOrderbyId() throws Exception {
-//        List<OrderdetailDTO> orderdetailDTOList1 = new ArrayList<>();
-//        OrderDTO ordersDTO = new OrderDTO(1, 123, orderdetailDTOList1);
-//        when(orderService.findOderById(anyInt())).thenReturn(java.util.Optional.of(ordersDTO));
-//
-//        mockMvc.perform(get("/api/orders/", 1))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$[0].ordersId", is("1")))
-//                .andExpect(jsonPath("$[1].totalPrice", is("123.0")));
-//    }
+    @Test
+    public void testGetOrderbyId() throws Exception {
+        List<OrderdetailDTO> orderdetailDTOList1 = new ArrayList<>();
+        OrderDTO ordersDTO = new OrderDTO(1, 123, orderdetailDTOList1);
+        when(orderService.findOderById(anyInt())).thenReturn(java.util.Optional.of(ordersDTO));
+
+        mockMvc.perform(get("/api/orders/", 1))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].ordersId", is(1)))
+                .andExpect(jsonPath("$[1].totalPrice", is(123.0)));
+    }
 
 
 }
