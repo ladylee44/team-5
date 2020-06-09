@@ -124,7 +124,7 @@ public class ProductServiceTest {
     }
 
     @Test(expected = ProductNotFoundException.class)
-    public void updateProductFailTest(){
+    public void updateProductFailTest() {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setProductId(1);
         when(productRepository.findById(anyInt())).thenThrow(ProductNotFoundException.class);
@@ -132,7 +132,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void deleteProductSuccessTest(){
+    public void deleteProductSuccessTest() {
 
     }
 

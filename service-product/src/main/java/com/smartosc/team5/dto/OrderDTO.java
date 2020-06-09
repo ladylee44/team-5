@@ -28,6 +28,9 @@ public class OrderDTO {
     private List<OrderdetailDTO> orderDetailEntities;
 
 
-    public OrderDTO(int i, int i1, List<OrderdetailDTO> orderdetailDTOList1) {
+    public OrderDTO(int ordersId, double totalPrice, List<OrderdetailDTO> orderDetailEntities) {
+        this.ordersId = ordersId;
+        this.totalPrice = totalPrice;
+        this.orderDetailEntities = orderDetailEntities;
     }
 }

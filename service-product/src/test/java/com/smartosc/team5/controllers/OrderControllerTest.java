@@ -81,12 +81,19 @@ public class OrderControllerTest {
         OrderDTO ordersDTO = new OrderDTO(1, 123, orderdetailDTOList1);
         when(orderService.findOderById(anyInt())).thenReturn(java.util.Optional.of(ordersDTO));
 
-        mockMvc.perform(get("/api/orders/", 1))
+        mockMvc.perform(get("/api/orders/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].ordersId", is(1)))
-                .andExpect(jsonPath("$[1].totalPrice", is(123.0)));
+                .andExpect(jsonPath("$.ordersId", is(1)))
+                .andExpect(jsonPath("$.totalPrice", is(123.0)));
     }
 
+    @Test
+    public void testGetOrderbyIdFail() throws Exception {
+        when(orderService.findOderById(anyInt())).thenReturn(null);
+
+        mockMvc.perform(get("/api/orders/{id}", 111))
+                .andExpect(status().isNotFound());
+    }
 
 }

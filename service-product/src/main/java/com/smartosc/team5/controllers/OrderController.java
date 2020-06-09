@@ -1,6 +1,8 @@
 package com.smartosc.team5.controllers;
 
+import com.smartosc.team5.constant.Constant;
 import com.smartosc.team5.dto.OrderDTO;
+import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.services.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,12 +48,14 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<Optional<OrderDTO>> getOrderById(@PathVariable("orderId") int orderId){
+    public ResponseEntity<Optional<OrderDTO>> getOrderById(@PathVariable("orderId") int orderId) throws NotFoundException {
         Optional<OrderDTO> ordersDTO = orderService.findOderById(orderId);
         if (ordersDTO.isPresent()) {
+            LOGGER.info("Get order by id success:");
             return new ResponseEntity<>(ordersDTO, HttpStatus.OK);
         }
-        return ResponseEntity.notFound().build();
+        LOGGER.info("Not found id order");
+        throw new NotFoundException(Constant.ORDER_NOT_FOUND + orderId);
     }
 
     /**
