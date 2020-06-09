@@ -1,7 +1,7 @@
 package com.smartosc.team5.converts;
 
 
-import com.smartosc.common.dto.OrderDTO;
+import com.smartosc.team5.dto.OrderDTO;
 import com.smartosc.team5.entities.Order;
 
 /**

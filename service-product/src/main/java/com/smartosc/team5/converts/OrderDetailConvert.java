@@ -1,7 +1,7 @@
 package com.smartosc.team5.converts;
 
-import com.smartosc.common.dto.OrderdetailDTO;
-import com.smartosc.common.dto.ProductDTO;
+import com.smartosc.team5.dto.OrderdetailDTO;
+import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.entities.OrderDetail;
 import com.smartosc.team5.entities.Product;
 
@@ -13,13 +13,15 @@ import com.smartosc.team5.entities.Product;
  * @created_by Huupd
  */
 public class OrderDetailConvert {
-    /**Convert OrderDetailEntity to OrderDetailDTO*/
-    public static OrderdetailDTO convertEntitytoDTO(OrderDetail orderDetail){
+    /**
+     * Convert OrderDetailEntity to OrderDetailDTO
+     */
+    public static OrderdetailDTO convertEntitytoDTO(OrderDetail orderDetail) {
         OrderdetailDTO orderdetailDTO = new OrderdetailDTO();
         orderdetailDTO.setDeltailId(orderDetail.getDeltailId());
         orderdetailDTO.setPrice(orderDetail.getPrice());
         orderdetailDTO.setQuantity(orderDetail.getQuantity());
-        ProductDTO productDTO = Convert.convertProductToDTO(orderDetail.getProduct());
+        ProductDTO productDTO = ProductConvert.convertProductToDTO(orderDetail.getProduct());
         orderdetailDTO.setProductDTO(productDTO);
         return orderdetailDTO;
     }
@@ -30,7 +32,7 @@ public class OrderDetailConvert {
         orderDetail.setDeltailId(orderdetailDTO.getDeltailId());
         orderDetail.setPrice(orderdetailDTO.getPrice());
         orderDetail.setQuantity(orderdetailDTO.getQuantity());
-        Product product = Convert.convertProductDTOtoProduct(orderdetailDTO.getProductDTO());
+        Product product = ProductConvert.convertProductDTOtoProduct(orderdetailDTO.getProductDTO());
         orderDetail.setProduct(product);
         return orderDetail;
     }

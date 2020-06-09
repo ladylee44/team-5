@@ -1,6 +1,6 @@
-package com.smartosc.common.validate.annotation;
+package com.smartosc.team5.validate.annotation;
 
-import com.smartosc.common.validate.PriceContraintValidator;
+import com.smartosc.team5.validate.PriceContraintValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

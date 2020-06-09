@@ -1,7 +1,7 @@
 package com.smartosc.team5.services;
 
-import com.smartosc.common.dto.ProductDTO;
-import com.smartosc.team5.converts.Convert;
+import com.smartosc.team5.converts.ProductConvert;
+import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.entities.Product;
 import com.smartosc.team5.repositories.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class ProductService {
         List<Product> productList = productRepository.findAll();
         List<ProductDTO> productDTOList = new ArrayList<>();
         productList.forEach(p->{
-            ProductDTO productDTO = Convert.convertProductToDTO(p);
+            ProductDTO productDTO = ProductConvert.convertProductToDTO(p);
             productDTOList.add(productDTO);
         });
         return productDTOList;
@@ -39,7 +39,7 @@ public class ProductService {
 
     public ProductDTO addProduct(ProductDTO productDTO){
         log.info("Create a new product");
-        Product productCreate = productRepository.save(Convert.convertProductDTOtoProduct(productDTO));
+        Product productCreate = productRepository.save(ProductConvert.convertProductDTOtoProduct(productDTO));
         productDTO.setProductId(productCreate.getProductId());
         return productDTO;
     }
@@ -48,7 +48,7 @@ public class ProductService {
         log.info("Find product by Id");
         Optional<Product> productOptional = productRepository.findById(id);
         if(productOptional.isPresent()){
-            return Convert.convertProductToDTO(productOptional.get());
+            return ProductConvert.convertProductToDTO(productOptional.get());
         } else
         return null;
     }
@@ -56,7 +56,7 @@ public class ProductService {
     public ProductDTO updateProduct(ProductDTO productDTO, Integer id){
         log.info("Update product");
         ProductDTO updateProduct = findById(id);
-        Product product = Convert.convertProductDTOtoProduct(productDTO);
+        Product product = ProductConvert.convertProductDTOtoProduct(productDTO);
         productRepository.save(product);
         updateProduct.setProductId(productDTO.getProductId());
         return productDTO;

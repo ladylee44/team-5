@@ -1,7 +1,8 @@
 package com.smartosc.team5.controllers;
 
-import com.smartosc.common.dto.OrderDTO;
-import com.smartosc.common.dto.OrderdetailDTO;
+
+import com.smartosc.team5.dto.OrderDTO;
+import com.smartosc.team5.dto.OrderdetailDTO;
 import com.smartosc.team5.repositories.OrderRepository;
 import com.smartosc.team5.services.OrderService;
 import org.junit.Before;

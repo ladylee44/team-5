@@ -1,9 +1,10 @@
 package com.smartosc.team5.services;
 
-import com.smartosc.common.dto.OrderDTO;
-import com.smartosc.common.dto.OrderdetailDTO;
-import com.smartosc.common.dto.ProductDTO;
-import com.smartosc.team5.converts.Convert;
+
+import com.smartosc.team5.converts.ProductConvert;
+import com.smartosc.team5.dto.OrderDTO;
+import com.smartosc.team5.dto.OrderdetailDTO;
+import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.entities.Order;
 import com.smartosc.team5.entities.OrderDetail;
 import com.smartosc.team5.repositories.OrderDetailRepository;
@@ -86,7 +87,7 @@ public class OrderServiceTest {
 
         when(orderRepository.findById(1)).thenReturn(Optional.of(order));
 
-        Optional<OrderDTO> orderDTOptional = orderService.findOderById(1);
+        Optional<OrderDTO> orderDTOptional = (orderService.findOderById(1));
 
         assertEquals(1, orderDTOptional.get().getOrdersId());
     }
@@ -94,7 +95,7 @@ public class OrderServiceTest {
     @Test
     public void testFindOrderByIdFail() {
         when(orderRepository.findById(anyInt())).thenReturn(Optional.empty());
-        Optional<OrderDTO> orderDTO = orderService.findOderById(999);
+        Optional<OrderDTO> orderDTO = (orderService.findOderById(999));
         assertEquals(Optional.empty(), orderDTO);
     }
 
@@ -124,7 +125,7 @@ public class OrderServiceTest {
         orderDTO.setStatus(1);
         orderDTO.setOrderDetailEntities(orderdetailDTOList);
 
-        when(productRepository.findById(1)).thenReturn(Optional.of(Convert.convertProductDTOtoProduct(productDTO)));
+        when(productRepository.findById(1)).thenReturn(Optional.of(ProductConvert.convertProductDTOtoProduct(productDTO)));
 
         when(orderRepository.save(any(Order.class))).thenAnswer((Answer<Order>) invocation -> {
             Order order = (Order) invocation.getArguments()[0];

@@ -1,11 +1,11 @@
 package com.smartosc.team5.services;
 
-import com.smartosc.common.dto.OrderDTO;
-import com.smartosc.common.dto.OrderdetailDTO;
-import com.smartosc.common.dto.ProductDTO;
-import com.smartosc.team5.converts.Convert;
-import com.smartosc.team5.converts.OrderConvert;
 import com.smartosc.team5.converts.OrderDetailConvert;
+import com.smartosc.team5.converts.ProductConvert;
+import com.smartosc.team5.dto.OrderDTO;
+import com.smartosc.team5.converts.OrderConvert;
+import com.smartosc.team5.dto.OrderdetailDTO;
+import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.entities.Order;
 import com.smartosc.team5.entities.OrderDetail;
 import com.smartosc.team5.entities.Product;
@@ -28,8 +28,7 @@ import java.util.Optional;
  * @created_at 05/06/2020 - 02:49 PM
  * @created_by ThaoPhuong
  * @since 05/06/2020
- */
-@Slf4j
+ */@Slf4j
 @Service
 public class OrderService {
     private OrderRepository orderRepository;
@@ -71,7 +70,7 @@ public class OrderService {
             orderDetailList.forEach(orderDetail -> {
                 OrderdetailDTO orderdetailDTO = OrderDetailConvert.convertEntitytoDTO(orderDetail);
                 Product product = orderDetail.getProduct();
-                ProductDTO productDTO = Convert.convertProductToDTO(product);
+                ProductDTO productDTO = ProductConvert.convertProductToDTO(product);
                 orderdetailDTOList.add(orderdetailDTO);
             });
             log.info("find order by id :{}", id);

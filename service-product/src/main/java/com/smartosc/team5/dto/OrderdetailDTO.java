@@ -1,4 +1,4 @@
-package com.smartosc.common.dto;
+package com.smartosc.team5.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
