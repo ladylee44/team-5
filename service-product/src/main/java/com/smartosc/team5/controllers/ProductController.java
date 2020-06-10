@@ -5,6 +5,7 @@ import com.smartosc.team5.exception.ProductNotFoundException;
 import com.smartosc.team5.services.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +41,9 @@ public class ProductController {
      */
     @GetMapping
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
+//        String token = R;
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setBearerAuth();
         List<ProductDTO> productDTOList = productService.getAllProducts();
         log.info("Get all products");
         if (productDTOList.isEmpty()) {

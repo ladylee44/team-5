@@ -9,4 +9,5 @@ package com.smartosc.team5.constant;
  */
 public class Constant {
     public static final String ORDER_NOT_FOUND = "Order not found for id :: ";
+    public static final String restAPI = "api";
 }
