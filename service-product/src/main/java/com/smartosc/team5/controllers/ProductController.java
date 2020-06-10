@@ -1,19 +1,16 @@
 package com.smartosc.team5.controllers;
 
 import com.smartosc.team5.dto.ProductDTO;
-import com.smartosc.team5.entities.Product;
 import com.smartosc.team5.exception.ProductNotFoundException;
 import com.smartosc.team5.services.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * team5
@@ -45,7 +42,7 @@ public class ProductController {
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
         List<ProductDTO> productDTOList = productService.getAllProducts();
         log.info("Get all products");
-        if (productDTOList == null) {
+        if (productDTOList.isEmpty()) {
             log.info("No product found");
             return ResponseEntity.noContent().build();
         }
@@ -108,15 +105,15 @@ public class ProductController {
      * @return
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProduct(@PathVariable(value = "id") Integer id) {
+    public ResponseEntity<ProductDTO> deleteProduct(@PathVariable(value = "id") Integer id) {
         log.info("Delete product id " + id);
-        if (productService.findById(id) == null) {
+        if (productService.findById(id).equals(null)) {
             log.info("Product not found");
-            return null;
+            throw new ProductNotFoundException(id);
         } else {
             productService.deleteProduct(id);
             log.info("Delete product successfully");
-            return ResponseEntity.ok().body("Delete successfully");
+            return ResponseEntity.ok().build();
         }
     }
 }
