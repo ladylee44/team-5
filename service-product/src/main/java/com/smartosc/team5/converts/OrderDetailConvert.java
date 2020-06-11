@@ -3,6 +3,7 @@ package com.smartosc.team5.converts;
 import com.smartosc.team5.dto.OrderdetailDTO;
 import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.entities.OrderDetail;
+import com.smartosc.team5.entities.Product;
 
 /**
  * Team5
@@ -24,4 +25,18 @@ public class OrderDetailConvert {
         orderdetailDTO.setProductDTO(productDTO);
         return orderdetailDTO;
     }
+
+    /**
+     * Convert OrderDetailEntity to OrderDetailDTO
+     */
+    public static OrderDetail convertDTOtoEntity(OrderdetailDTO orderdetailDTO) {
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setDeltailId(orderdetailDTO.getDeltailId());
+        orderDetail.setPrice(orderdetailDTO.getPrice());
+        orderDetail.setQuantity(orderdetailDTO.getQuantity());
+        Product product = ProductConvert.convertProductDTOtoProduct(orderdetailDTO.getProductDTO());
+        orderDetail.setProduct(product);
+        return orderDetail;
+    }
+
 }

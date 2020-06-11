@@ -1,7 +1,7 @@
 package com.smartosc.team5.services;
 
-import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.converts.ProductConvert;
+import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.entities.Product;
 import com.smartosc.team5.exception.ProductNotFoundException;
 import com.smartosc.team5.repositories.ProductRepository;
@@ -24,13 +24,8 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class ProductService {
-
-    private ProductRepository productRepository;
-
     @Autowired
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
+    private ProductRepository productRepository;
 
     public List<ProductDTO> getAllProducts() {
         log.info("Get all products");
@@ -53,8 +48,9 @@ public class ProductService {
         Optional<Product> productOptional = productRepository.findById(id);
         if (productOptional.isPresent()) {
             return ProductConvert.convertProductToDTO(productOptional.get());
-        } else
+        } else {
             throw new ProductNotFoundException(id);
+        }
     }
 
     public ProductDTO addProduct(ProductDTO productDTO) {
@@ -72,25 +68,27 @@ public class ProductService {
 
     public ProductDTO updateProduct(ProductDTO productDTO, Integer id) {
         log.info("Update product");
-        try{
+        try {
             ProductDTO updateProduct = findById(id);
             Product product = ProductConvert.convertProductDTOtoProduct(productDTO);
             productRepository.save(product);
             updateProduct.setProductId(productDTO.getProductId());
             log.info("Update product success");
             return productDTO;
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Update product fail");
             return null;
         }
     }
 
-    public void deleteProduct(int id) {
+    public boolean deleteProduct(int id) {
         log.info("Delete product");
-        try{
-            productRepository.deleteById(id);
-        } catch (ProductNotFoundException e){
-
+        Optional<Product> productOptional = productRepository.findById(id);
+        if (productOptional != null) {
+            productRepository.delete(productOptional.get());
+            return true;
+        } else {
+            throw new ProductNotFoundException(id);
         }
     }
 }
