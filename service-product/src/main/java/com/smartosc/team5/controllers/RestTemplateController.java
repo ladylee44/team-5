@@ -3,7 +3,6 @@ package com.smartosc.team5.controllers;
 import com.smartosc.team5.dto.JwtRequest;
 import com.smartosc.team5.services.RestService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -20,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @created_by Huupd
  */
 @RestController
-@RequestMapping("/authenticate")
+@RequestMapping("api/authenticate")
 public class RestTemplateController {
     @Autowired
     private RestService restService;
@@ -29,6 +28,7 @@ public class RestTemplateController {
     public String getToken(@RequestBody JwtRequest jwtRequest) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        return restService.getToken("http://localhost:8888/api/auth/signin", HttpMethod.POST, headers, jwtRequest);
+         String authToken = restService.getToken("http://localhost:8888/api/auth/signin", HttpMethod.POST, headers, jwtRequest);
+        return authToken;
     }
 }
