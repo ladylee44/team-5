@@ -9,7 +9,7 @@ package com.smartosc.team5.exception;
  * @since 05/06/2020
  */
 public class ProductNotFoundException extends RuntimeException {
-    public ProductNotFoundException(Integer id){
-        super("Product id " + id + " not found");
+    public ProductNotFoundException(Integer id) {
+        super("product id " + id + " not found");
     }
 }

@@ -1,19 +1,16 @@
 package com.smartosc.team5.controllers;
 
 import com.smartosc.team5.dto.ProductDTO;
-import com.smartosc.team5.entities.Product;
 import com.smartosc.team5.exception.ProductNotFoundException;
 import com.smartosc.team5.services.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * team5
@@ -63,7 +60,7 @@ public class ProductController {
     public ResponseEntity<ProductDTO> findProductById(@PathVariable(value = "id") Integer id) {
         log.info("Find product by id " + id);
         ProductDTO productDTO = productService.findById(id);
-        if (productDTO.equals(null)) {
+        if (productDTO == null) {
             log.error("Product not found");
             throw new ProductNotFoundException(id);
         } else {
