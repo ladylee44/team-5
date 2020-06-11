@@ -30,7 +30,7 @@ public class Product implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int productId;
 
-    @NotEmpty(message = "Please provide a name")
+//    @NotEmpty(message = "Please provide a name")
     @Column(name = "name", length = 45)
     private String name;
 

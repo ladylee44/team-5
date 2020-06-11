@@ -1,15 +1,20 @@
 package com.smartosc.team5.controllers;
 
+import com.smartosc.team5.constant.Constant;
+import com.smartosc.team5.dto.JwtRequest;
 import com.smartosc.team5.dto.OrderDTO;
+import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.services.OrderService;
+import com.smartosc.team5.services.RestService;
+import com.smartosc.user.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * team5
@@ -23,13 +28,12 @@ import java.util.List;
 @RequestMapping("/api/orders")
 public class OrderController {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderController.class);
-
+    @Autowired
     private OrderService orderService;
 
     @Autowired
-    public OrderController(OrderService orderService) {
-        this.orderService = orderService;
-    }
+    private RestService restService;
+
 
     /**
      * Get all order
@@ -40,7 +44,20 @@ public class OrderController {
         if (orderDTOList.isEmpty()) {
             LOGGER.info("Not found orders");
         }
+        LOGGER.info("Get all order");
         return new ResponseEntity<>(orderDTOList, HttpStatus.OK);
+    }
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<Optional<OrderDTO>> getOrderById(@PathVariable("orderId") int orderId) throws NotFoundException {
+
+        Optional<OrderDTO> ordersDTO = orderService.findOderById(orderId);
+        if (ordersDTO.isPresent()) {
+            LOGGER.info("Get order by id success:");
+            return new ResponseEntity<>(ordersDTO, HttpStatus.OK);
+        }
+        LOGGER.info("Not found id order");
+        throw new NotFoundException(Constant.ORDER_NOT_FOUND + orderId);
     }
 
     /**
