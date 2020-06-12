@@ -10,5 +10,5 @@ http://localhost:9999/api/orders - POST - create new order
 http://localhost:9999/api/orders - PUT - change status order
 http://localhost:9999/api/orders/cancel - GET - cancel order
 
-http://localhost:9999/api/auth/signin - POST - login
-http://localhost:9999/api/auth/signup - POST - register
+http://localhost:8888/api/auth/signin - POST - login
+http://localhost:8888/api/auth/signup - POST - register
