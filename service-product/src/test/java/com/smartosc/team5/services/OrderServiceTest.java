@@ -159,7 +159,43 @@ public class OrderServiceTest {
 
         OrderDTO createOrder = orderService.createOrder(orderDTO);
 
+    }
 
+
+    @Test
+    public void changeOrderStatus() {
+        List<OrderDetail> orderDetailList = new ArrayList<>();
+        Order orders = new Order();
+        orders.setOrderId(1);
+        orders.setTotalPrice(120.0);
+        orders.setStatus(0);
+        orders.setOrderDetailEntities(orderDetailList);
+
+        when(orderRepository.findById(1)).thenReturn(Optional.of(orders));
+
+        OrderDTO orderDTO = new OrderDTO();
+        orderDTO.setOrdersId(1);
+        orderDTO.setTotalPrice(120.0);
+        orderDTO.setStatus(1);
+        orderService.changeOrderStatus(orderDTO);
+        assertEquals(1, orderDTO.getStatus());
+        assertEquals(1, orderDTO.getOrdersId());
+
+    }
+
+    @Test
+    public void testCancelOrderStatus() {
+        List<OrderDetail> orderDetailList = new ArrayList<>();
+        Order orders = new Order();
+        orders.setOrderId(1);
+        orders.setTotalPrice(120.0);
+        orders.setStatus(0);
+        orders.setOrderDetailEntities(orderDetailList);
+
+        when(orderRepository.findById(1)).thenReturn(Optional.of(orders));
+
+        boolean check  = orderService.cancelOrderStatus(1);
+        assertEquals(true,check);
     }
 
 
