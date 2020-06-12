@@ -3,7 +3,7 @@ package com.smartosc.team5.controllers;
 import com.smartosc.team5.abstracts.AbstractTest;
 import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.exception.CustomGlobalExceptionHandler;
-import com.smartosc.team5.exception.ProductNotFoundException;
+import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.services.ProductService;
 import org.junit.Before;
 import org.junit.Test;
@@ -90,9 +90,9 @@ public class ProductControllerTest {
                 .andDo(MockMvcResultHandlers.log());
     }
 
-    @Test(expected = ProductNotFoundException.class)
+    @Test(expected = NotFoundException.class)
     public void findByIdFailTest() throws Exception {
-        when(productService.findById(anyInt())).thenThrow(ProductNotFoundException.class);
+        when(productService.findById(anyInt())).thenThrow(NotFoundException.class);
         mockMvc.perform(get("/api/products/{id}", 123))
                 .andExpect(status().isNotFound())
                 .andDo(MockMvcResultHandlers.log());
@@ -138,7 +138,7 @@ public class ProductControllerTest {
     public void updateProductFailTest() throws Exception {
         ProductDTO productDTO = new ProductDTO(1, "product", "product", "image", 123);
 
-        when(productService.findById(anyInt())).thenThrow(ProductNotFoundException.class);
+        when(productService.findById(anyInt())).thenThrow(NotFoundException.class);
         mockMvc.perform(put("/api/products/{id}", productDTO.getProductId()))
                 .andExpect(status().isNotFound());
     }
@@ -155,10 +155,10 @@ public class ProductControllerTest {
     }
 
     //test fail
-    @Test(expected = ProductNotFoundException.class)
+    @Test(expected = NotFoundException.class)
     public void deleteProductFailTest() throws Exception {
         ProductDTO productDTO = new ProductDTO(1, "product", "product", "image", 123);
-        when(productService.findById(anyInt())).thenThrow(ProductNotFoundException.class);
+        when(productService.findById(anyInt())).thenThrow(NotFoundException.class);
         mockMvc.perform(delete("/api/products/{id}",productDTO.getProductId()))
                 .andExpect(status().isNotFound());
     }

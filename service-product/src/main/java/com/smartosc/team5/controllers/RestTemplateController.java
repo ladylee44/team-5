@@ -25,7 +25,6 @@ public class RestTemplateController {
     @Autowired
     private RestService restService = new RestServiceImpl();
 
-
     @PostMapping()
     public String getToken(@RequestBody JwtRequest jwtRequest) {
         HttpHeaders headers = new HttpHeaders();

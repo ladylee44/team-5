@@ -1,12 +1,15 @@
 package com.smartosc.team5.services;
 
+import com.smartosc.team5.constant.ConstantVariables;
 import com.smartosc.team5.converts.ProductConvert;
 import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.entities.Product;
-import com.smartosc.team5.exception.ProductNotFoundException;
+import com.smartosc.team5.exception.NoContentException;
+import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.repositories.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Recover;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class ProductService {
+
     @Autowired
     private ProductRepository productRepository;
 
@@ -40,7 +44,7 @@ public class ProductService {
             return productDTOList;
         }
         log.info("Get all products null");
-        return null;
+        throw new NoContentException(ConstantVariables.PRODUCT_NO_CONTENT);
     }
 
     public ProductDTO findById(int id) {
@@ -49,7 +53,7 @@ public class ProductService {
         if (productOptional.isPresent()) {
             return ProductConvert.convertProductToDTO(productOptional.get());
         } else {
-            throw new ProductNotFoundException(id);
+            throw new NotFoundException(ConstantVariables.PRODUCT_NOT_FOUND);
         }
     }
 
@@ -88,7 +92,12 @@ public class ProductService {
             productRepository.delete(productOptional.get());
             return true;
         } else {
-            throw new ProductNotFoundException(id);
+            throw new NotFoundException(ConstantVariables.PRODUCT_NOT_FOUND);
         }
+    }
+
+    @Recover
+    public void recover() {
+        log.info("Recovering");
     }
 }
