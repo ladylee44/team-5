@@ -27,10 +27,9 @@ public class JwtProvider {
     private int jwtExpiration;
 
     public String generateJwtToken(Authentication authentication) {
-        // Tạo ra jwt từ thông tin user
+
         UserPrinciple userPrincipal = (UserPrinciple) authentication.getPrincipal();
 
-        // Tạo chuỗi json web token từ  user.
         return Jwts.builder()
                 .setSubject((userPrincipal.getUsername()))
                 .setIssuedAt(new Date())
@@ -38,7 +37,7 @@ public class JwtProvider {
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
-    // Lấy thông tin user từ jwt
+
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parser()
                 .setSigningKey(jwtSecret)

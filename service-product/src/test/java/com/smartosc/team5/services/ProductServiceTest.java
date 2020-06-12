@@ -123,7 +123,7 @@ public class ProductServiceTest {
         assertEquals(1, productUpdate.getProductId());
     }
 
-    @Test(expected = ProductNotFoundException.class)
+    @Test
     public void updateProductFailTest() {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setProductId(1);
@@ -133,7 +133,12 @@ public class ProductServiceTest {
 
     @Test
     public void deleteProductSuccessTest() {
+        Product product = new Product();
+        product.setProductId(1);
+        when(productRepository.findById(anyInt())).thenReturn(Optional.of(product));
 
+        boolean deleteResult = productService.deleteProduct(1);
+        assertEquals(deleteResult, true);
     }
 
 }
