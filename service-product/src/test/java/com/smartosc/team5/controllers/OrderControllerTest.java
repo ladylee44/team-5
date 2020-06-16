@@ -3,6 +3,7 @@ package com.smartosc.team5.controllers;
 
 import com.smartosc.team5.dto.OrderDTO;
 import com.smartosc.team5.dto.OrderdetailDTO;
+import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.repositories.OrderRepository;
 import com.smartosc.team5.services.OrderService;
 import org.junit.Before;
@@ -16,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
@@ -76,6 +78,15 @@ public class OrderControllerTest {
         }
     }
     @Test
+    @DisplayName("Test GetAllOrders False()")
+    public void testGetAllOrderFalse() throws Exception {
+        List<OrderDTO> orderDTOList = new ArrayList<>();
+        when(orderService.getAllOrder()).thenReturn(orderDTOList);
+            mockMvc.perform(get("/api/orders"))
+                    .andExpect(status().isNoContent());
+
+    }
+    @Test
     public void testGetOrderbyId() throws Exception {
         List<OrderdetailDTO> orderdetailDTOList1 = new ArrayList<>();
         OrderDTO ordersDTO = new OrderDTO(1, 123, orderdetailDTOList1);
@@ -88,13 +99,13 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.totalPrice", is(123.0)));
     }
 
-//    @Test
-//    public void testGetOrderbyIdFail() throws Exception {
-//        when(orderService.findOderById(anyInt())).thenReturn(null);
-//
-//        mockMvc.perform(get("/api/orders/{id}", 111))
-//                .andExpect(status().isNotFound());
-//    }
+    @Test
+    public void testGetOrderbyIdFail() throws Exception {
+        when(orderService.findOderById(anyInt())).thenThrow(NotFoundException.class);
+        mockMvc.perform(get("/api/orders/{id}", 111))
+                .andExpect(status().isNoContent())
+                .andDo(MockMvcResultHandlers.log());
+    }
 
 
 }

@@ -43,6 +43,7 @@ public class OrderController {
         List<OrderDTO> orderDTOList = orderService.getAllOrder();
         if (orderDTOList.isEmpty()) {
             LOGGER.info("Not found orders");
+            return ResponseEntity.noContent().build();
         }
         LOGGER.info("Get all order");
         return new ResponseEntity<>(orderDTOList, HttpStatus.OK);
