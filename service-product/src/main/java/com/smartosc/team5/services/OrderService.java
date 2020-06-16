@@ -1,10 +1,19 @@
 package com.smartosc.team5.services;
 
+import com.smartosc.team5.converts.OrderDetailConvert;
+import com.smartosc.team5.converts.ProductConvert;
 import com.smartosc.team5.dto.OrderDTO;
 import com.smartosc.team5.converts.OrderConvert;
+import com.smartosc.team5.dto.OrderdetailDTO;
+import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.entities.Order;
+import com.smartosc.team5.entities.OrderDetail;
+import com.smartosc.team5.entities.Product;
+import com.smartosc.team5.repositories.OrderDetailRepository;
 import com.smartosc.team5.repositories.OrderRepository;
+import com.smartosc.team5.repositories.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,16 +33,21 @@ import java.util.Optional;
 @Service
 public class OrderService {
     private OrderRepository orderRepository;
+    private ProductRepository productRepository;
+    private OrderDetailRepository orderDetailRepository;
 
-    public OrderService(OrderRepository orderRepository) {
+    @Autowired
+    public OrderService(OrderRepository orderRepository, ProductRepository productRepository, OrderDetailRepository orderDetailRepository) {
         this.orderRepository = orderRepository;
+        this.productRepository = productRepository;
+        this.orderDetailRepository = orderDetailRepository;
     }
 
     /**
      * Get all order
      */
     public List<OrderDTO> getAllOrder() {
-        log.info("get all list order");
+        log.info("Get all list order");
         List<Order> orderList = orderRepository.findAll();
         log.debug("List order {}", orderList);
         List<OrderDTO> orderDTOList = new ArrayList<>();
@@ -47,21 +61,57 @@ public class OrderService {
     /**
      * Find order by id
      */
-    public OrderDTO findOderById(Integer id) {
+    public Optional<OrderDTO> findOderById(Integer id) {
         Optional<Order> orderOptional = orderRepository.findById(id);
+        OrderDTO orderDTO = new OrderDTO();
         if (orderOptional.isPresent()) {
-            return OrderConvert.convertEntityToDTO(orderOptional.get());
+            List<OrderdetailDTO> orderdetailDTOList = new ArrayList<>();
+            List<OrderDetail> orderDetailList = orderOptional.get().getOrderDetailEntities();
+            orderDTO = OrderConvert.convertEntityToDTO(orderOptional.get());
+            orderDetailList.forEach(orderDetail -> {
+                OrderdetailDTO orderdetailDTO = OrderDetailConvert.convertEntitytoDTO(orderDetail);
+                Product product = orderDetail.getProduct();
+                ProductDTO productDTO = ProductConvert.convertProductToDTO(product);
+                orderdetailDTOList.add(orderdetailDTO);
+            });
+            log.info("find order by id :{}", id);
+            orderDTO.setOrderDetailEntities(orderdetailDTOList);
+            return Optional.of(orderDTO);
+        } else {
+            log.info("find order fail ");
+            return Optional.empty();
         }
-        return null;
     }
 
     /**
      * Create order
      */
-    public Order createOrder(OrderDTO orderDTO) {
-        log.info("Create order");
-        Order order = OrderConvert.convertDTOtoEntity(orderDTO);
-        return orderRepository.save(order);
+    public OrderDTO createOrder(OrderDTO orderDTO) {
+        try {
+            Order order = OrderConvert.convertDTOtoEntity(orderDTO);
+            Order createOrder = orderRepository.save(order);
+            List<OrderDetail> orderDetailList = new ArrayList<>();
+            List<OrderdetailDTO> orderdetailDTOList = orderDTO.getOrderDetailEntities();
+            orderdetailDTOList.forEach(orderdetailDTO -> {
+                OrderDetail orderDetail = OrderDetailConvert.convertDTOtoEntity(orderdetailDTO);
+                Optional<Product> product = productRepository.findById(orderDetail.getProduct().getProductId());
+                if (product.isPresent()) {
+                    orderDetail.setProduct(product.get());
+                    orderDetail.setPrice(product.get().getPrice() * orderDetail.getQuantity());
+                    orderDetailList.add(orderDetail);
+                    orderDetail.setOrders(order);
+                    orderDetailRepository.save(orderDetail);
+                }
+
+            });
+            log.info("Create order success");
+            orderDTO.setOrdersId(order.getOrderId());
+            return orderDTO;
+        } catch (Exception e) {
+            log.error("create fail with error::", e.getMessage());
+            throw new NullPointerException();
+        }
+
     }
 
     /**
@@ -71,7 +121,7 @@ public class OrderService {
         log.info("change order status");
         Optional<Order> orderOptional = orderRepository.findById(orderDTO.getOrdersId());
         if (orderOptional.isPresent()) {
-            switch (orderDTO.getOrdersId()) {
+            switch (orderDTO.getStatus()) {
                 case 0:
                     orderOptional.get().setStatus(1);
                     break;
@@ -83,6 +133,10 @@ public class OrderService {
                     break;
                 default:
                     break;
+            }{
+                if (orderOptional.get() != null){
+                    orderRepository.save(orderOptional.get());
+                };
             }
         }
     }

@@ -2,9 +2,8 @@ package com.smartosc.team5.controllers;
 
 
 import com.smartosc.team5.constant.Constant;
-import com.smartosc.team5.dto.JwtRequest;
-
 import com.smartosc.team5.dto.OrderDTO;
+import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.services.OrderService;
 import com.smartosc.team5.services.RestService;
 import com.smartosc.user.services.UserService;
@@ -15,6 +14,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * team5
@@ -28,15 +28,12 @@ import java.util.List;
 @RequestMapping("/api/orders")
 public class OrderController {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderController.class);
-
+    @Autowired
     private OrderService orderService;
-    private RestService restService;
 
     @Autowired
-    public OrderController(OrderService orderService,RestService restService) {
-        this.orderService = orderService;
-        this.restService =restService;
-    }
+    private RestService restService;
+
 
     /**
      * Get all order
@@ -47,6 +44,7 @@ public class OrderController {
         if (orderDTOList.isEmpty()) {
             LOGGER.info("Not found orders");
         }
+        LOGGER.info("Get all order");
         return new ResponseEntity<>(orderDTOList, HttpStatus.OK);
     }
 

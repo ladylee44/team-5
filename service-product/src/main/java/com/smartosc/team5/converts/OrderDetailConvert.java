@@ -16,7 +16,7 @@ public class OrderDetailConvert {
     /**
      * Convert OrderDetailEntity to OrderDetailDTO
      */
-    public OrderdetailDTO convertEntitytoDTO(OrderDetail orderDetail) {
+    public static OrderdetailDTO convertEntitytoDTO(OrderDetail orderDetail) {
         OrderdetailDTO orderdetailDTO = new OrderdetailDTO();
         orderdetailDTO.setDeltailId(orderDetail.getDeltailId());
         orderdetailDTO.setPrice(orderDetail.getPrice());
@@ -26,10 +26,8 @@ public class OrderDetailConvert {
         return orderdetailDTO;
     }
 
-    /**
-     * Convert OrderDetailEntity to OrderDetailDTO
-     */
-    public static OrderDetail convertDTOtoEntity(OrderdetailDTO orderdetailDTO) {
+    /**Convert OrderDetailEntity to OrderDetailDTO*/
+    public static OrderDetail convertDTOtoEntity(OrderdetailDTO orderdetailDTO){
         OrderDetail orderDetail = new OrderDetail();
         orderDetail.setDeltailId(orderdetailDTO.getDeltailId());
         orderDetail.setPrice(orderdetailDTO.getPrice());
@@ -38,5 +36,4 @@ public class OrderDetailConvert {
         orderDetail.setProduct(product);
         return orderDetail;
     }
-
 }
