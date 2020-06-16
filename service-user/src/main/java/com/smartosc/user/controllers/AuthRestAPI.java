@@ -9,6 +9,7 @@ import com.smartosc.user.requests.RequestLogin;
 import com.smartosc.user.requests.RequestSignup;
 import com.smartosc.user.security.JwtProvider;
 import com.smartosc.user.security.JwtResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ import java.util.Set;
  * @created_at 03/06/2020 - 2:12 PM
  * @created_by Huupd
  */
-
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 public class AuthRestAPI {
@@ -63,7 +64,7 @@ public class AuthRestAPI {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody RequestLogin loginRequest) {
-
+        log.info("Login with {}",loginRequest.getUsername());
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
@@ -90,6 +91,7 @@ public class AuthRestAPI {
         }
 
         // Creating user's account
+        log.info("Create account");
         User user = new User(signUpRequest.getName(), signUpRequest.getUsername(),
                 signUpRequest.getEmail(), encoder.encode(signUpRequest.getPassword()));
 

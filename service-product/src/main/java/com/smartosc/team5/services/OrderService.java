@@ -28,7 +28,8 @@ import java.util.Optional;
  * @created_at 05/06/2020 - 02:49 PM
  * @created_by ThaoPhuong
  * @since 05/06/2020
- */@Slf4j
+ */
+@Slf4j
 @Service
 public class OrderService {
     private OrderRepository orderRepository;
@@ -108,7 +109,7 @@ public class OrderService {
             return orderDTO;
         } catch (Exception e) {
             log.error("create fail with error::", e.getMessage());
-            return null;
+            throw new NullPointerException();
         }
 
     }
@@ -120,7 +121,7 @@ public class OrderService {
         log.info("change order status");
         Optional<Order> orderOptional = orderRepository.findById(orderDTO.getOrdersId());
         if (orderOptional.isPresent()) {
-            switch (orderDTO.getOrdersId()) {
+            switch (orderDTO.getStatus()) {
                 case 0:
                     orderOptional.get().setStatus(1);
                     break;
@@ -132,6 +133,10 @@ public class OrderService {
                     break;
                 default:
                     break;
+            }{
+                if (orderOptional.get() != null){
+                    orderRepository.save(orderOptional.get());
+                };
             }
         }
     }

@@ -1,12 +1,15 @@
 package com.smartosc.team5.services;
 
 
+import com.smartosc.team5.converts.OrderConvert;
+import com.smartosc.team5.converts.OrderDetailConvert;
 import com.smartosc.team5.converts.ProductConvert;
 import com.smartosc.team5.dto.OrderDTO;
 import com.smartosc.team5.dto.OrderdetailDTO;
 import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.entities.Order;
 import com.smartosc.team5.entities.OrderDetail;
+import com.smartosc.team5.entities.Product;
 import com.smartosc.team5.repositories.OrderDetailRepository;
 import com.smartosc.team5.repositories.OrderRepository;
 import com.smartosc.team5.repositories.ProductRepository;
@@ -78,7 +81,12 @@ public class OrderServiceTest {
      */
     @Test
     public void testGetOrderByIdSuccess() {
+        Product product = new Product();
         List<OrderDetail> orderDetailList = new ArrayList<>();
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setProduct(product);
+        orderDetailList.add(orderDetail);
+
         Order order = new Order();
         order.setOrderId(1);
         order.setTotalPrice(9999);
@@ -121,25 +129,16 @@ public class OrderServiceTest {
         orderdetailDTOList.add(orderdetailDTO);
 
         OrderDTO orderDTO = new OrderDTO();
-        orderDTO.setTotalPrice(998);
+        orderDTO.setOrdersId(1);
+        orderDTO.setTotalPrice(999);
         orderDTO.setStatus(1);
         orderDTO.setOrderDetailEntities(orderdetailDTOList);
 
-        when(productRepository.findById(1)).thenReturn(Optional.of(ProductConvert.convertProductDTOtoProduct(productDTO)));
+        when(orderRepository.save(any(Order.class))).thenReturn(OrderConvert.convertDTOtoEntity(orderDTO));
 
-        when(orderRepository.save(any(Order.class))).thenAnswer((Answer<Order>) invocation -> {
-            Order order = (Order) invocation.getArguments()[0];
-            order.setOrderId(1);
-            return order;
-        });
+        when(orderDetailRepository.save(any(OrderDetail.class))).thenReturn(OrderDetailConvert.convertDTOtoEntity(orderdetailDTO));
 
-        when(orderDetailRepository.save(any(OrderDetail.class))).thenAnswer((Answer<OrderDetail>) invocation -> {
-            OrderDetail orderDetail = (OrderDetail) invocation.getArguments()[0];
-            orderDetail.setDeltailId(1);
-            return orderDetail;
-        });
-
-        assertEquals(0, orderDTO.getOrdersId());
+        when(productRepository.findById(anyInt())).thenReturn(Optional.of(ProductConvert.convertProductDTOtoProduct(productDTO)));
 
         OrderDTO createOrder = orderService.createOrder(orderDTO);
 
@@ -155,20 +154,40 @@ public class OrderServiceTest {
     public void testCreateOrderFail() {
         OrderDTO orderDTO = new OrderDTO();
 
-        when(orderRepository.save(any(Order.class))).thenThrow(Exception.class);
+        when(orderRepository.save(any(Order.class))).thenThrow(NullPointerException.class);
 
         OrderDTO createOrder = orderService.createOrder(orderDTO);
 
+        assertEquals(NullPointerException.class, createOrder);
     }
 
 
     @Test
     public void changeOrderStatus() {
+        //case 1:
         List<OrderDetail> orderDetailList = new ArrayList<>();
+        List<OrderdetailDTO> orderdetailDTOS = new ArrayList<>();
+        Order orders3 = new Order();
+        orders3.setOrderId(1);
+        orders3.setTotalPrice(120.0);
+        orders3.setStatus(0);
+        orders3.setOrderDetailEntities(orderDetailList);
+        when(orderRepository.findById(1)).thenReturn(Optional.of(orders3));
+        OrderDTO orderDTO3 = new OrderDTO();
+        orderDTO3.setOrdersId(1);
+        orderDTO3.setTotalPrice(120.0);
+        orderDTO3.setStatus(0);
+        orderDTO3.setOrderDetailEntities(orderdetailDTOS);
+        orderService.changeOrderStatus(orderDTO3);
+        assertEquals(orders3.getStatus(), 1);
+        assertEquals(1, orderDTO3.getOrdersId());
+
+
+        //case 2:
         Order orders = new Order();
         orders.setOrderId(1);
         orders.setTotalPrice(120.0);
-        orders.setStatus(0);
+        orders.setStatus(1);
         orders.setOrderDetailEntities(orderDetailList);
 
         when(orderRepository.findById(1)).thenReturn(Optional.of(orders));
@@ -178,8 +197,26 @@ public class OrderServiceTest {
         orderDTO.setTotalPrice(120.0);
         orderDTO.setStatus(1);
         orderService.changeOrderStatus(orderDTO);
-        assertEquals(1, orderDTO.getStatus());
+        assertEquals(2, orders.getStatus());
         assertEquals(1, orderDTO.getOrdersId());
+
+        //case 3:
+        Order orders1 = new Order();
+        orders1.setOrderId(1);
+        orders1.setTotalPrice(120.0);
+        orders1.setStatus(2);
+        orders1.setOrderDetailEntities(orderDetailList);
+
+        when(orderRepository.findById(1)).thenReturn(Optional.of(orders1));
+
+        OrderDTO orderDTO1 = new OrderDTO();
+        orderDTO1.setOrdersId(1);
+        orderDTO1.setTotalPrice(120.0);
+        orderDTO1.setStatus(2);
+        orderDTO1.setOrderDetailEntities(orderdetailDTOS);
+        orderService.changeOrderStatus(orderDTO1);
+        assertEquals(3, orders1.getStatus());
+        assertEquals(1, orderDTO1.getOrdersId());
 
     }
 
@@ -194,8 +231,37 @@ public class OrderServiceTest {
 
         when(orderRepository.findById(1)).thenReturn(Optional.of(orders));
 
-        boolean check  = orderService.cancelOrderStatus(1);
-        assertEquals(true,check);
+        boolean check1 = orderService.cancelOrderStatus(1);
+        assertEquals(true, check1);
+
+
+        //case2:
+        Order orders1 = new Order();
+        orders1.setOrderId(1);
+        orders1.setTotalPrice(120.0);
+        orders1.setStatus(3);
+        orders1.setOrderDetailEntities(orderDetailList);
+
+        when(orderRepository.findById(1)).thenReturn(Optional.of(orders1));
+
+        boolean check2 = orderService.cancelOrderStatus(1);
+        assertEquals(true, check2);
+
+
+
+        //case3:
+        Order orders2 = new Order();
+        orders1.setOrderId(1);
+        orders1.setTotalPrice(120.0);
+        orders1.setStatus(3);
+        orders1.setOrderDetailEntities(orderDetailList);
+
+        when(orderRepository.findById(1)).thenReturn(Optional.of(orders2));
+
+        boolean check3 = orderService.cancelOrderStatus(455);
+        assertEquals(false, check3);
+
+
     }
 
 
