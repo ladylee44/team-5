@@ -1,6 +1,7 @@
 package com.smartosc.team5.controllers;
 
 
+import com.smartosc.team5.abstracts.AbstractTest;
 import com.smartosc.team5.dto.OrderDTO;
 import com.smartosc.team5.dto.OrderdetailDTO;
 import com.smartosc.team5.exception.NotFoundException;
@@ -23,13 +24,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 /**
  * team5
  *
@@ -40,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(value = OrderController.class)
 public class OrderControllerTest {
-    private MockMvc  mockMvc;
+    private MockMvc mockMvc;
 
     @InjectMocks
     private OrderController orderController;
@@ -48,6 +51,7 @@ public class OrderControllerTest {
     private OrderService orderService;
     @Mock
     private OrderRepository orderRepository;
+
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
@@ -60,32 +64,34 @@ public class OrderControllerTest {
 
     @Test
     @DisplayName("Test GetAllOrders()")
-    public void testGetAllOrder(){
+    public void testGetAllOrder() {
         List<OrderdetailDTO> orderdetailDTOList1 = new ArrayList<>();
         List<OrderdetailDTO> orderdetailDTOList2 = new ArrayList<>();
 
-        List<OrderDTO> orderDTOList = Arrays.asList(new OrderDTO(1,999,orderdetailDTOList1),
-                                                    new OrderDTO(2,999,orderdetailDTOList2));
+        List<OrderDTO> orderDTOList = Arrays.asList(new OrderDTO(1, 999, orderdetailDTOList1),
+                new OrderDTO(2, 999, orderdetailDTOList2));
 
         when(orderService.getAllOrder()).thenReturn(orderDTOList);
         try {
             mockMvc.perform(get("/api/orders"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$",hasSize(2)));
-        }catch (Exception e){
+                    .andExpect(jsonPath("$", hasSize(2)));
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     @Test
     @DisplayName("Test GetAllOrders False()")
     public void testGetAllOrderFalse() throws Exception {
         List<OrderDTO> orderDTOList = new ArrayList<>();
         when(orderService.getAllOrder()).thenReturn(orderDTOList);
-            mockMvc.perform(get("/api/orders"))
-                    .andExpect(status().isNoContent());
+        mockMvc.perform(get("/api/orders"))
+                .andExpect(status().isNoContent());
 
     }
+
     @Test
     public void testGetOrderbyId() throws Exception {
         List<OrderdetailDTO> orderdetailDTOList1 = new ArrayList<>();
@@ -101,11 +107,45 @@ public class OrderControllerTest {
 
     @Test
     public void testGetOrderbyIdFail() throws Exception {
-        when(orderService.findOderById(anyInt())).thenThrow(NotFoundException.class);
+        when(orderService.findOderById(anyInt())).thenReturn(Optional.empty());
         mockMvc.perform(get("/api/orders/{id}", 111))
-                .andExpect(status().isNoContent())
-                .andDo(MockMvcResultHandlers.log());
+                .andExpect(status().isNotFound());
     }
 
 
+    @Test
+    public void testCreateOrderSuccess() throws Exception {
+        List<OrderdetailDTO> orderdetailDTOList1 = new ArrayList<>();
+        OrderDTO ordersDTO = new OrderDTO(1, 123, orderdetailDTOList1);
+        when(orderService.createOrder(any(OrderDTO.class))).thenReturn(ordersDTO);
+
+        mockMvc.perform(post("/api/orders").contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractTest.mapToJson(ordersDTO)))
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.log());
+    }
+
+//    @Test
+//    public void testChangeOrderStatusSuccess(){
+//        List<OrderdetailDTO> orderdetailDTOList1 = new ArrayList<>();
+//        OrderDTO ordersDTO = new OrderDTO(1, 123, orderdetailDTOList1);
+//        when(orderService.changeOrderStatus(any(OrderDTO.class))).thenReturn();
+//    }
+
+    @Test
+    public void testCancelOrderStatusSuccess() throws Exception {
+        List<OrderdetailDTO> orderdetailDTOList1 = new ArrayList<>();
+        OrderDTO ordersDTO = new OrderDTO();
+        ordersDTO.setOrdersId(1);
+        ordersDTO.setTotalPrice(9999);
+        ordersDTO.setStatus(1);
+        ordersDTO.setOrderDetailEntities(orderdetailDTOList1);
+        when(orderService.findOderById(anyInt())).thenReturn(java.util.Optional.of(ordersDTO));
+
+        mockMvc.perform(get("/api/orders/cancel/", 1))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.ordersId", is(1)))
+                .andExpect(jsonPath("$.totalPrice", is(123.0)));
+    }
 }

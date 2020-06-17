@@ -82,10 +82,9 @@ public class OrderController {
     /**
      * Cancel order
      */
-    @GetMapping("/cancel")
-    public ResponseEntity<Boolean> cancelOrder(@RequestParam("orderId") Integer orderId) {
+    @GetMapping("/cancel/{orderId}")
+    public ResponseEntity<Boolean> cancelOrder(@PathVariable("orderId") Integer orderId) {
         return new ResponseEntity<>(orderService.cancelOrderStatus(orderId), HttpStatus.OK);
-
     }
 
 }
