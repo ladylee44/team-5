@@ -24,7 +24,6 @@ public class RestTemplateController {
     @Autowired
     private RestService restService = new RestServiceImpl();
 
-
     @PostMapping()
     public String getToken() {
         JwtRequest jwtRequest = new JwtRequest("admin6","123456");

@@ -3,7 +3,8 @@ package com.smartosc.team5.services;
 import com.smartosc.team5.converts.ProductConvert;
 import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.entities.Product;
-import com.smartosc.team5.exception.ProductNotFoundException;
+import com.smartosc.team5.exception.NoContentException;
+import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.repositories.ProductRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,7 +58,7 @@ public class ProductServiceTest {
         assertEquals(3, productDTOList.size());
     }
 
-    @Test
+    @Test(expected = NoContentException.class)
     public void getAllProductEmptyTest() {
         when(productRepository.findAll()).thenReturn(null);
         List<ProductDTO> productDTOList = productService.getAllProducts();
@@ -78,9 +79,9 @@ public class ProductServiceTest {
         assertEquals(1, productDTO.getProductId());
     }
 
-    @Test(expected = ProductNotFoundException.class)
+    @Test(expected = NotFoundException.class)
     public void findProductByIdFailTest() {
-        when(productRepository.findById(anyInt())).thenThrow(ProductNotFoundException.class);
+        when(productRepository.findById(anyInt())).thenThrow(NotFoundException.class);
         productService.findById(123);
     }
 
@@ -127,7 +128,7 @@ public class ProductServiceTest {
     public void updateProductFailTest() {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setProductId(1);
-        when(productRepository.findById(anyInt())).thenThrow(ProductNotFoundException.class);
+        when(productRepository.findById(anyInt())).thenThrow(NotFoundException.class);
         productService.updateProduct(productDTO, 123);
     }
 

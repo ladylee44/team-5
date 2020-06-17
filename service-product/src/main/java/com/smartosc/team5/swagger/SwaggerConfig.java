@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.smartosc.team5.constant.Constant.restAPI;
+import static com.smartosc.team5.constant.ConstantVariables.restAPI;
 import static springfox.documentation.builders.PathSelectors.regex;
 
 /**

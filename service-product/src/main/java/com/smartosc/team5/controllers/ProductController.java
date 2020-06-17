@@ -1,11 +1,14 @@
 package com.smartosc.team5.controllers;
 
+import com.smartosc.team5.constant.ConstantVariables;
 import com.smartosc.team5.dto.ProductDTO;
-import com.smartosc.team5.exception.ProductNotFoundException;
+import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.services.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +28,7 @@ import java.util.List;
 @Validated
 @Slf4j
 public class ProductController {
+    private int retryCount = 0;
 
     private ProductService productService;
 
@@ -62,7 +66,7 @@ public class ProductController {
         ProductDTO productDTO = productService.findById(id);
         if (productDTO == null) {
             log.error("Product not found");
-            throw new ProductNotFoundException(id);
+            throw new NotFoundException(ConstantVariables.PRODUCT_NOT_FOUND + id);
         } else {
             log.info("Find product by id successfully");
             return ResponseEntity.ok().body(productDTO);
@@ -105,10 +109,11 @@ public class ProductController {
      * @return
      */
     @DeleteMapping("/{id}")
+    @Retryable(value = {NotFoundException.class}, maxAttempts = 3, backoff = @Backoff(delay = 10000L))
     public ResponseEntity<String> deleteProduct(@PathVariable(value = "id") Integer id) {
         log.info("Delete product id " + id);
         if (productService.findById(id) == null) {
-            log.info("Product not found");
+            log.info("Attempting at {} time(s)", ++retryCount);
             return null;
         } else {
             productService.deleteProduct(id);

@@ -38,7 +38,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
     }
 
-    @ExceptionHandler(ProductNotFoundException.class)
+    @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorObject> customHandleNotFound(Exception ex, WebRequest request) {
         ErrorObject errorObject = new ErrorObject();
         errorObject.setTimestamp(LocalDateTime.now());
