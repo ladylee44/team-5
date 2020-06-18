@@ -11,6 +11,9 @@ import com.smartosc.user.entities.User;
  * @created_by Huupd
  */
 public class UserConvert {
+
+    private UserConvert(){}
+
     public static UserDTO convertUserToUserDTO(User user){
         UserDTO userDTO =  new UserDTO();
         userDTO.setUserId(user.getId());

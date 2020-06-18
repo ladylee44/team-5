@@ -38,6 +38,10 @@ import java.util.Set;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthRestAPI {
+    private static final String NOT_FOUND_ROLE = "Fail! -> Cause: User Role not find.";
+    private static final String USER_EXITS = "Fail -> Username is already taken!";
+    private static final String EMAIL_EXITS = "Fail -> Email is already taken!";
+
 
     private AuthenticationManager authenticationManager;
 
@@ -63,8 +67,8 @@ public class AuthRestAPI {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody RequestLogin loginRequest) {
-        log.info("Login with {}",loginRequest.getUsername());
+    public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody RequestLogin loginRequest) {
+        log.info("Login with {}", loginRequest.getUsername());
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
@@ -81,12 +85,12 @@ public class AuthRestAPI {
     @PostMapping("/signup")
     public ResponseEntity<String> registerUser(@Valid @RequestBody RequestSignup signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return new ResponseEntity<String>("Fail -> Username is already taken!",
+            return new ResponseEntity<>(USER_EXITS,
                     HttpStatus.BAD_REQUEST);
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return new ResponseEntity<String>("Fail -> Email is already in use!",
+            return new ResponseEntity<>(EMAIL_EXITS,
                     HttpStatus.BAD_REQUEST);
         }
 
@@ -102,19 +106,19 @@ public class AuthRestAPI {
             switch (role) {
                 case "admin":
                     Role adminRole = roleRepository.findByName(RoleName.ROLE_ADMIN)
-                            .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
+                            .orElseThrow(() -> new RuntimeException(NOT_FOUND_ROLE));
                     roles.add(adminRole);
 
                     break;
                 case "pm":
                     Role pmRole = roleRepository.findByName(RoleName.ROLE_PM)
-                            .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
+                            .orElseThrow(() -> new RuntimeException(NOT_FOUND_ROLE));
                     roles.add(pmRole);
 
                     break;
                 default:
                     Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
-                            .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
+                            .orElseThrow(() -> new RuntimeException(NOT_FOUND_ROLE));
                     roles.add(userRole);
             }
         });

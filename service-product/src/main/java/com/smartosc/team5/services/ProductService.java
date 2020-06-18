@@ -84,7 +84,7 @@ public class ProductService {
     public boolean deleteProduct(int id) {
         log.info("Delete product");
         Optional<Product> productOptional = productRepository.findById(id);
-        if (productOptional != null) {
+        if (productOptional.isPresent()) {
             productRepository.delete(productOptional.get());
             return true;
         } else {

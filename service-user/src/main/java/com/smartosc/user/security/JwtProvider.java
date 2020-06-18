@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+
 import java.util.Date;
 
 /**
@@ -18,7 +19,7 @@ import java.util.Date;
 @Component
 public class JwtProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtProvider.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtProvider.class);
 
     @Value("${jwtSecret}")
     private String jwtSecret;
@@ -50,15 +51,15 @@ public class JwtProvider {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException e) {
-            logger.error("Invalid JWT signature -> Message: {} ", e);
+            LOGGER.error("Invalid JWT signature -> Message: {} ", e.getMessage());
         } catch (MalformedJwtException e) {
-            logger.error("Invalid JWT token -> Message: {}", e);
+            LOGGER.error("Invalid JWT token -> Message: {}", e.getMessage());
         } catch (ExpiredJwtException e) {
-            logger.error("Expired JWT token -> Message: {}", e);
+            LOGGER.error("Expired JWT token -> Message: {}", e.getMessage());
         } catch (UnsupportedJwtException e) {
-            logger.error("Unsupported JWT token -> Message: {}", e);
+            LOGGER.error("Unsupported JWT token -> Message: {}", e.getMessage());
         } catch (IllegalArgumentException e) {
-            logger.error("JWT claims string is empty -> Message: {}", e);
+            LOGGER.error("JWT claims string is empty -> Message: {}", e.getMessage());
         }
 
         return false;

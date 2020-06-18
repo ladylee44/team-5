@@ -11,6 +11,8 @@ import com.smartosc.user.entities.Role;
  * @created_by Huupd
  */
 public class RoleConvert {
+    private RoleConvert(){}
+
     public static RoleDTO convertRoleDTO(Role role) {
         RoleDTO roleDTO = new RoleDTO();
         roleDTO.setId(role.getId());
