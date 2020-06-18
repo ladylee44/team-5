@@ -10,6 +10,7 @@ import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.entities.Order;
 import com.smartosc.team5.entities.OrderDetail;
 import com.smartosc.team5.entities.Product;
+import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.repositories.OrderDetailRepository;
 import com.smartosc.team5.repositories.OrderRepository;
 import com.smartosc.team5.repositories.ProductRepository;
@@ -248,7 +249,6 @@ public class OrderServiceTest {
         assertEquals(true, check2);
 
 
-
         //case3:
         Order orders2 = new Order();
         orders1.setOrderId(1);
@@ -265,4 +265,10 @@ public class OrderServiceTest {
     }
 
 
+    @Test
+    public void testCancelOrderFail(){
+        when(orderRepository.findById(anyInt())).thenReturn(Optional.empty());
+        boolean check1 = orderService.cancelOrderStatus(999);
+        assertEquals(false, check1);
+    }
 }

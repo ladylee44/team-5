@@ -27,11 +27,9 @@ public class RestTemplateController {
 
     @PostMapping()
     public String getToken() {
-        JwtRequest jwtRequest = new JwtRequest("admin6","123456");
+        JwtRequest jwtRequest = new JwtRequest("admin6", "123456");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
-        String authToken = restService.getToken("http://localhost:8888/api/auth/signin", HttpMethod.POST, headers, jwtRequest);
-        return authToken;
+        return restService.getToken("http://localhost:8888/api/auth/signin", HttpMethod.POST, headers, jwtRequest);
     }
 }

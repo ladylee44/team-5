@@ -5,7 +5,6 @@ import com.smartosc.team5.converts.ProductConvert;
 import com.smartosc.team5.dto.OrderDTO;
 import com.smartosc.team5.converts.OrderConvert;
 import com.smartosc.team5.dto.OrderdetailDTO;
-import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.entities.Order;
 import com.smartosc.team5.entities.OrderDetail;
 import com.smartosc.team5.entities.Product;
@@ -63,7 +62,7 @@ public class OrderService {
      */
     public Optional<OrderDTO> findOderById(Integer id) {
         Optional<Order> orderOptional = orderRepository.findById(id);
-        OrderDTO orderDTO = new OrderDTO();
+        OrderDTO orderDTO;
         if (orderOptional.isPresent()) {
             List<OrderdetailDTO> orderdetailDTOList = new ArrayList<>();
             List<OrderDetail> orderDetailList = orderOptional.get().getOrderDetailEntities();
@@ -71,7 +70,7 @@ public class OrderService {
             orderDetailList.forEach(orderDetail -> {
                 OrderdetailDTO orderdetailDTO = OrderDetailConvert.convertEntitytoDTO(orderDetail);
                 Product product = orderDetail.getProduct();
-                ProductDTO productDTO = ProductConvert.convertProductToDTO(product);
+                 ProductConvert.convertProductToDTO(product);
                 orderdetailDTOList.add(orderdetailDTO);
             });
             log.info("find order by id :{}", id);
@@ -89,7 +88,7 @@ public class OrderService {
     public OrderDTO createOrder(OrderDTO orderDTO) {
         try {
             Order order = OrderConvert.convertDTOtoEntity(orderDTO);
-            Order createOrder = orderRepository.save(order);
+             orderRepository.save(order);
             List<OrderDetail> orderDetailList = new ArrayList<>();
             List<OrderdetailDTO> orderdetailDTOList = orderDTO.getOrderDetailEntities();
             orderdetailDTOList.forEach(orderdetailDTO -> {
@@ -102,7 +101,6 @@ public class OrderService {
                     orderDetail.setOrders(order);
                     orderDetailRepository.save(orderDetail);
                 }
-
             });
             log.info("Create order success");
             orderDTO.setOrdersId(order.getOrderId());
@@ -133,10 +131,11 @@ public class OrderService {
                     break;
                 default:
                     break;
-            }{
-                if (orderOptional.get() != null){
+            }
+            {
+                if (orderOptional.get() != null) {
                     orderRepository.save(orderOptional.get());
-                };
+                }
             }
         }
     }
@@ -162,5 +161,4 @@ public class OrderService {
         }
         return false;
     }
-
 }

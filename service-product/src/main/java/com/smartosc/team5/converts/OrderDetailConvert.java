@@ -13,6 +13,7 @@ import com.smartosc.team5.entities.Product;
  * @created_by Huupd
  */
 public class OrderDetailConvert {
+    private OrderDetailConvert(){}
     /**
      * Convert OrderDetailEntity to OrderDetailDTO
      */

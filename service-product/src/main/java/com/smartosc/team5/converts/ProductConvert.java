@@ -12,6 +12,7 @@ import com.smartosc.team5.entities.Product;
  * @since 04/06/2020
  */
 public class ProductConvert {
+    private ProductConvert(){}
     /**
      * convert product to DTO
      * @param product

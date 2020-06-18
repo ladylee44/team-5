@@ -13,6 +13,9 @@ import com.smartosc.team5.entities.Order;
  */
 public class OrderConvert {
 
+    private OrderConvert() {
+    }
+
     public static OrderDTO convertEntityToDTO(Order order) {
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setOrdersId(order.getOrderId());
@@ -23,7 +26,7 @@ public class OrderConvert {
         return orderDTO;
     }
 
-    public static Order convertDTOtoEntity(OrderDTO orderDTO){
+    public static Order convertDTOtoEntity(OrderDTO orderDTO) {
         Order order = new Order();
         order.setOrderId(orderDTO.getOrdersId());
         order.setTotalPrice(orderDTO.getTotalPrice());

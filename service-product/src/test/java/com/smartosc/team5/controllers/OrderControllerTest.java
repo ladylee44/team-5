@@ -125,27 +125,37 @@ public class OrderControllerTest {
                 .andDo(MockMvcResultHandlers.log());
     }
 
-//    @Test
-//    public void testChangeOrderStatusSuccess(){
-//        List<OrderdetailDTO> orderdetailDTOList1 = new ArrayList<>();
-//        OrderDTO ordersDTO = new OrderDTO(1, 123, orderdetailDTOList1);
-//        when(orderService.changeOrderStatus(any(OrderDTO.class))).thenReturn();
-//    }
-
     @Test
     public void testCancelOrderStatusSuccess() throws Exception {
         List<OrderdetailDTO> orderdetailDTOList1 = new ArrayList<>();
         OrderDTO ordersDTO = new OrderDTO();
         ordersDTO.setOrdersId(1);
         ordersDTO.setTotalPrice(9999);
-        ordersDTO.setStatus(1);
+        ordersDTO.setStatus(0);
         ordersDTO.setOrderDetailEntities(orderdetailDTOList1);
-        when(orderService.findOderById(anyInt())).thenReturn(java.util.Optional.of(ordersDTO));
+        when(orderService.cancelOrderStatus(anyInt())).thenReturn(true);
 
-        mockMvc.perform(get("/api/orders/cancel/", 1))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.ordersId", is(1)))
-                .andExpect(jsonPath("$.totalPrice", is(123.0)));
+        mockMvc.perform(get("/api/orders/cancel/{id}", 1))
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    public void testCancelOrderStatusFail() throws Exception {
+        when(orderService.cancelOrderStatus(anyInt())).thenReturn(false);
+
+        mockMvc.perform(get("/api/orders/cancel/{id}", 999))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void changeOrderStatus(){
+        List<OrderdetailDTO> orderdetailDTOList1 = new ArrayList<>();
+        OrderDTO ordersDTO = new OrderDTO();
+        ordersDTO.setOrdersId(1);
+        ordersDTO.setTotalPrice(9999);
+        ordersDTO.setStatus(0);
+        ordersDTO.setOrderDetailEntities(orderdetailDTOList1);
+        when(orderService.findOderById(anyInt())).thenReturn(Optional.of(ordersDTO));
     }
 }

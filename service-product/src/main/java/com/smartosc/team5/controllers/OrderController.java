@@ -6,7 +6,6 @@ import com.smartosc.team5.dto.OrderDTO;
 import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.services.OrderService;
 import com.smartosc.team5.services.RestService;
-import com.smartosc.user.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +49,7 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<Optional<OrderDTO>> getOrderById(@PathVariable("orderId") int orderId) throws NotFoundException {
+    public ResponseEntity<Optional<OrderDTO>> getOrderById(@PathVariable("orderId") int orderId){
 
         Optional<OrderDTO> ordersDTO = orderService.findOderById(orderId);
         if (ordersDTO.isPresent()) {
@@ -84,7 +83,11 @@ public class OrderController {
      */
     @GetMapping("/cancel/{orderId}")
     public ResponseEntity<Boolean> cancelOrder(@PathVariable("orderId") Integer orderId) {
-        return new ResponseEntity<>(orderService.cancelOrderStatus(orderId), HttpStatus.OK);
+        if (orderService.cancelOrderStatus(orderId))
+            return new ResponseEntity<>(true, HttpStatus.OK);
+
+        throw new NotFoundException("Id not found " + orderId);
+
     }
 
 }
