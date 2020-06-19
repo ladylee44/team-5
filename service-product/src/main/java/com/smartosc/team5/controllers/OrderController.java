@@ -1,11 +1,12 @@
 package com.smartosc.team5.controllers;
 
 
-import com.smartosc.team5.constant.Constant;
+import com.smartosc.team5.constant.ConstantVariables;
 import com.smartosc.team5.dto.APIResponse;
 import com.smartosc.team5.dto.OrderDTO;
 import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.services.OrderService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ public class OrderController {
     private OrderService orderService;
 
     private static final String MESSAGE ="Success";
+
 
     /**
      * Get all order
@@ -59,7 +61,7 @@ public class OrderController {
             return new ResponseEntity<>(ordersDTO, HttpStatus.OK);
         }
         LOGGER.info("Not found id order");
-        throw new NotFoundException(Constant.ORDER_NOT_FOUND + orderId);
+        throw new NotFoundException(ConstantVariables.ORDER_NOT_FOUND + orderId);
     }
 
     /**

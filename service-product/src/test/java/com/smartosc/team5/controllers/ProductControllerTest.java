@@ -2,8 +2,7 @@ package com.smartosc.team5.controllers;
 
 import com.smartosc.team5.abstracts.AbstractTest;
 import com.smartosc.team5.dto.ProductDTO;
-import com.smartosc.team5.exception.CustomGlobalExceptionHandler;
-import com.smartosc.team5.exception.ProductNotFoundException;
+import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.services.ProductService;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,8 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -52,6 +51,7 @@ public class ProductControllerTest {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders
                 .standaloneSetup(productController)
+                .addFilter(new CORSFilter())
                 .build();
     }
 
@@ -90,9 +90,9 @@ public class ProductControllerTest {
                 .andDo(MockMvcResultHandlers.log());
     }
 
-    @Test(expected = ProductNotFoundException.class)
+    @Test
     public void findByIdFailTest() throws Exception {
-        when(productService.findById(anyInt())).thenThrow(ProductNotFoundException.class);
+        when(productService.findById(anyInt())).thenThrow(NotFoundException.class);
         mockMvc.perform(get("/api/products/{id}", 123))
                 .andExpect(status().isNotFound())
                 .andDo(MockMvcResultHandlers.log());
@@ -120,7 +120,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void updateProductSuccess() throws Exception {
+    public void updateProductSuccessTest() throws Exception {
         ProductDTO productDTO = new ProductDTO(1, "product", "product", "image", 123);
 
         when(productService.findById(anyInt())).thenReturn(productDTO);
@@ -133,33 +133,29 @@ public class ProductControllerTest {
                 .andDo(MockMvcResultHandlers.log());
     }
 
-    //test fail
     @Test
     public void updateProductFailTest() throws Exception {
-        ProductDTO productDTO = new ProductDTO(1, "product", "product", "image", 123);
-
-        when(productService.findById(anyInt())).thenThrow(ProductNotFoundException.class);
-        mockMvc.perform(put("/api/products/{id}", productDTO.getProductId()))
-                .andExpect(status().isNotFound());
+        when(productService.findById(anyInt())).thenThrow(NotFoundException.class);
+        mockMvc.perform(put("/api/products/{id}", 2))
+                .andExpect(status().isNotFound())
+                .andDo(MockMvcResultHandlers.log());
     }
 
     @Test
     public void deleteProductSuccessTest() throws Exception {
         ProductDTO productDTO = new ProductDTO(1, "product", "product", "image", 123);
         when(productService.findById(anyInt())).thenReturn(productDTO);
-        when(productService.deleteProduct(productDTO.getProductId())).thenReturn(true);
+        when(productService.deleteProduct(productDTO.getProductId())).thenReturn(false);
 
         mockMvc.perform(delete("/api/products/{id}", productDTO.getProductId()))
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.log());
     }
 
-    //test fail
-    @Test(expected = ProductNotFoundException.class)
+    @Test
     public void deleteProductFailTest() throws Exception {
-        ProductDTO productDTO = new ProductDTO(1, "product", "product", "image", 123);
-        when(productService.findById(anyInt())).thenThrow(ProductNotFoundException.class);
-        mockMvc.perform(delete("/api/products/{id}",productDTO.getProductId()))
+        when(productService.findById(anyInt())).thenThrow(NotFoundException.class);
+        mockMvc.perform(delete("/api/products/{id}",2))
                 .andExpect(status().isNotFound());
     }
 }

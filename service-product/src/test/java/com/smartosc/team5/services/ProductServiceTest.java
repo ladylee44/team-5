@@ -3,7 +3,8 @@ package com.smartosc.team5.services;
 import com.smartosc.team5.converts.ProductConvert;
 import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.entities.Product;
-import com.smartosc.team5.exception.ProductNotFoundException;
+import com.smartosc.team5.exception.NoContentException;
+import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.repositories.ProductRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,8 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
@@ -50,22 +50,22 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void getAllProductsSuccessTest() {
+    public void getAllProductsSuccessTestService() {
         List<Product> productList = Arrays.asList(new Product(), new Product(), new Product());
         when(productRepository.findAll()).thenReturn(productList);
         List<ProductDTO> productDTOList = productService.getAllProducts();
         assertEquals(3, productDTOList.size());
     }
 
-    @Test
-    public void getAllProductEmptyTest() {
+    @Test(expected = NoContentException.class)
+    public void getAllProductEmptyTestService() {
         when(productRepository.findAll()).thenReturn(null);
         List<ProductDTO> productDTOList = productService.getAllProducts();
         assertEquals(null, productDTOList);
     }
 
     @Test
-    public void findProductByIdSuccessTest() {
+    public void findProductByIdSuccessTestService() {
         Product product = new Product();
         product.setProductId(1);
         product.setName("Product 1");
@@ -78,14 +78,15 @@ public class ProductServiceTest {
         assertEquals(1, productDTO.getProductId());
     }
 
-    @Test(expected = ProductNotFoundException.class)
-    public void findProductByIdFailTest() {
-        when(productRepository.findById(anyInt())).thenThrow(ProductNotFoundException.class);
-        productService.findById(123);
+    @Test(expected = NotFoundException.class)
+    public void findProductByIdFailTestService() {
+        when(productRepository.findById(anyInt())).thenReturn(Optional.empty());
+        Optional<ProductDTO> productDTO = Optional.ofNullable(productService.findById(123));
+        assertEquals(Optional.empty(), productDTO);
     }
 
     @Test
-    public void createProductSuccessTest() {
+    public void createProductSuccessTestService() {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setProductName("Product 1");
         productDTO.setDescription("Product Test");
@@ -102,15 +103,16 @@ public class ProductServiceTest {
         assertEquals(1, createProduct.getProductId());
     }
 
-    @Test(expected = Exception.class)
-    public void createProductFailTest() {
+    @Test
+    public void createProductFailTestService() {
         ProductDTO productDTO = new ProductDTO();
-        when(productRepository.save(any(Product.class))).thenThrow(Exception.class);
-        productService.addProduct(productDTO);
+        when(productRepository.save(any(Product.class))).thenReturn(null);
+        ProductDTO productCreate = productService.addProduct(productDTO);
+        assertEquals(null, productCreate);
     }
 
     @Test
-    public void updateProductSuccessTest() {
+    public void updateProductSuccessTestService() {
         Product product = new Product();
         product.setProductId(1);
         product.setName("Product 1");
@@ -124,21 +126,24 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void updateProductFailTest() {
+    public void updateProductFailTestService() {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setProductId(1);
-        when(productRepository.findById(anyInt())).thenThrow(ProductNotFoundException.class);
-        productService.updateProduct(productDTO, 123);
+        productDTO.setProductName("Product Name");
+        productDTO.setDescription("Product description");
+        productDTO.setImage("Product image");
+        productDTO.setPrice(10);
+        when(productRepository.findById(any())).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> {
+            productService.updateProduct(productDTO, 123);
+        });
     }
 
     @Test
-    public void deleteProductSuccessTest() {
+    public void deleteProductSuccessTestService() {
         Product product = new Product();
-        product.setProductId(1);
         when(productRepository.findById(anyInt())).thenReturn(Optional.of(product));
-
-        boolean deleteResult = productService.deleteProduct(1);
-        assertEquals(deleteResult, true);
+        boolean deleteProduct = productService.deleteProduct(1);
+        assertEquals(true, deleteProduct);
     }
-
 }

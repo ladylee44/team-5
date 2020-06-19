@@ -1,12 +1,17 @@
 package com.smartosc.team5.services;
 
+import com.smartosc.team5.constant.ConstantVariables;
 import com.smartosc.team5.converts.ProductConvert;
 import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.entities.Product;
-import com.smartosc.team5.exception.ProductNotFoundException;
+import com.smartosc.team5.exception.NoContentException;
+import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.repositories.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,6 +29,9 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class ProductService {
+
+    private int retryCount = 0;
+
     @Autowired
     private ProductRepository productRepository;
 
@@ -40,44 +48,44 @@ public class ProductService {
             return productDTOList;
         }
         log.info("Get all products null");
-        return null;
+        throw new NoContentException(ConstantVariables.PRODUCT_NO_CONTENT);
     }
 
+    @Retryable(value = {NotFoundException.class}, backoff = @Backoff(delay = 10000L))
     public ProductDTO findById(int id) {
         log.info("Find product by id " + id);
         Optional<Product> productOptional = productRepository.findById(id);
         if (productOptional.isPresent()) {
             return ProductConvert.convertProductToDTO(productOptional.get());
         } else {
-            throw new ProductNotFoundException(id);
+            log.info("Attempting at {} time(s)", ++retryCount);
+            throw new NotFoundException(ConstantVariables.PRODUCT_NOT_FOUND);
         }
     }
 
     public ProductDTO addProduct(ProductDTO productDTO) {
         log.info("Create a new product");
-        try {
-            Product productCreate = productRepository.save(ProductConvert.convertProductDTOtoProduct(productDTO));
-            productDTO.setProductId(productCreate.getProductId());
-            log.info("Create a new product success");
-            return productDTO;
-        } catch (Exception e) {
-            log.error("Create product fail");
-            return null;
-        }
+        Product productCreate = productRepository.save(ProductConvert.convertProductDTOtoProduct(productDTO));
+        productDTO.setProductId(productCreate.getProductId());
+        log.info("Create a new product success");
+        return productDTO;
     }
 
     public ProductDTO updateProduct(ProductDTO productDTO, Integer id) {
         log.info("Update product");
-        try {
-            ProductDTO updateProduct = findById(id);
-            Product product = ProductConvert.convertProductDTOtoProduct(productDTO);
-            productRepository.save(product);
-            updateProduct.setProductId(productDTO.getProductId());
+        Optional<Product> productUpdate = productRepository.findById(id);
+        if (productUpdate.isPresent()) {
+            productUpdate.get().setProductId(id);
+            productUpdate.get().setName(productDTO.getProductName());
+            productUpdate.get().setDescription(productDTO.getDescription());
+            productUpdate.get().setImage(productDTO.getImage());
+            productUpdate.get().setPrice(productDTO.getPrice());
+
+            productRepository.save(productUpdate.get());
             log.info("Update product success");
             return productDTO;
-        } catch (Exception e) {
-            log.error("Update product fail");
-            return null;
+        } else {
+            throw new NotFoundException(ConstantVariables.PRODUCT_NOT_FOUND);
         }
     }
 
@@ -88,7 +96,12 @@ public class ProductService {
             productRepository.delete(productOptional.get());
             return true;
         } else {
-            throw new ProductNotFoundException(id);
+            throw new NotFoundException(ConstantVariables.PRODUCT_NOT_FOUND);
         }
+    }
+
+    @Recover
+    public void recover() {
+        log.info("Recovering");
     }
 }

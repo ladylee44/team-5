@@ -35,6 +35,7 @@ public class ProductConvert {
      */
     public static Product convertProductDTOtoProduct(ProductDTO productDTO){
         Product product = new Product();
+        product.setProductId(productDTO.getProductId());
         product.setName(productDTO.getProductName());
         product.setImage(productDTO.getImage());
         product.setDescription(productDTO.getDescription());

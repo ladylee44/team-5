@@ -1,7 +1,6 @@
 package com.smartosc.team5.controllers;
 
 import com.smartosc.team5.dto.ProductDTO;
-import com.smartosc.team5.exception.ProductNotFoundException;
 import com.smartosc.team5.services.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,7 @@ public class ProductController {
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
         List<ProductDTO> productDTOList = productService.getAllProducts();
         log.info("Get all products");
-        if (productDTOList == null) {
+        if (productDTOList.isEmpty()) {
             log.info("No product found");
             return ResponseEntity.noContent().build();
         }
@@ -60,13 +59,14 @@ public class ProductController {
     public ResponseEntity<ProductDTO> findProductById(@PathVariable(value = "id") Integer id) {
         log.info("Find product by id " + id);
         ProductDTO productDTO = productService.findById(id);
-        if (productDTO == null) {
-            log.error("Product not found");
-            throw new ProductNotFoundException(id);
-        } else {
-            log.info("Find product by id successfully");
-            return ResponseEntity.ok().body(productDTO);
-        }
+        return ResponseEntity.ok().body(productDTO);
+//        if (productDTO == null) {
+//            log.error("Product not found");
+//            throw new NotFoundException(ConstantVariables.PRODUCT_NOT_FOUND + id);
+//        } else {
+//            log.info("Find product by id successfully");
+//            return ResponseEntity.ok().body(productDTO);
+//        }
     }
 
     /**
@@ -105,10 +105,10 @@ public class ProductController {
      * @return
      */
     @DeleteMapping("/{id}")
+
     public ResponseEntity<String> deleteProduct(@PathVariable(value = "id") Integer id) {
         log.info("Delete product id " + id);
         if (productService.findById(id) == null) {
-            log.info("Product not found");
             return null;
         } else {
             productService.deleteProduct(id);
