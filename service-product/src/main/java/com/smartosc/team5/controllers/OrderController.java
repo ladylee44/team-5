@@ -2,10 +2,10 @@ package com.smartosc.team5.controllers;
 
 
 import com.smartosc.team5.constant.Constant;
+import com.smartosc.team5.dto.APIResponse;
 import com.smartosc.team5.dto.OrderDTO;
 import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.services.OrderService;
-import com.smartosc.team5.services.RestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,22 +30,24 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @Autowired
-    private RestService restService;
-
+    private static final String MESSAGE ="Success";
 
     /**
      * Get all order
      */
     @GetMapping
-    public ResponseEntity<List<OrderDTO>> getAllOrder() {
+    public ResponseEntity<APIResponse<List<OrderDTO>>> getAllOrder() {
         List<OrderDTO> orderDTOList = orderService.getAllOrder();
         if (orderDTOList.isEmpty()) {
             LOGGER.info("Not found orders");
             return ResponseEntity.noContent().build();
         }
         LOGGER.info("Get all order");
-        return new ResponseEntity<>(orderDTOList, HttpStatus.OK);
+        APIResponse<List<OrderDTO>> listAPIResponse = new APIResponse<>();
+        listAPIResponse.setData(orderDTOList);
+        listAPIResponse.setMessage(MESSAGE);
+        listAPIResponse.setStatus(HttpStatus.OK.value());
+        return new ResponseEntity<>(listAPIResponse, HttpStatus.OK);
     }
 
     @GetMapping("/{orderId}")
