@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.smartosc.team5.constant.ConstantVariables.restAPI;
+import static com.smartosc.team5.constant.ConstantVariables.RESTAPI;
 import static springfox.documentation.builders.PathSelectors.regex;
 
 /**
@@ -34,7 +34,7 @@ import static springfox.documentation.builders.PathSelectors.regex;
 class SwaggerConfig {
     @Bean
     public Docket api() {
-        ApiInfo restAPIInfo = buildApiInfo(restAPI);
+        ApiInfo restAPIInfo = buildApiInfo(RESTAPI);
         List<ResponseMessage> resp = buildGlobalResponses();
 
         ParameterBuilder aParameterBuilder = new ParameterBuilder();
@@ -45,7 +45,7 @@ class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.smartosc.team5.controllers"))
-                .paths(regex(".*/" + restAPI + ".*"))
+                .paths(regex(".*/" + RESTAPI + ".*"))
                 .build()
                 .apiInfo(restAPIInfo).globalOperationParameters(aParameters);
     }

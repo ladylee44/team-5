@@ -2,7 +2,6 @@ package com.smartosc.team5.services;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Component;
 
 /**
  * team5
@@ -12,5 +11,5 @@ import org.springframework.stereotype.Component;
  * @created_by Huupd
  */
 public interface RestService {
-    public String getToken(String url, HttpMethod method, HttpHeaders headers, Object body);
+    String getToken(String url, HttpMethod method, HttpHeaders headers, Object body);
 }

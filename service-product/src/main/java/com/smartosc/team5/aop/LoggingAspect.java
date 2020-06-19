@@ -38,8 +38,7 @@ public class LoggingAspect {
 
     @Around("service()")
     public Object aroundServiceMethod(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        Object result = proceedingJoinPoint.proceed();
-        return result;
+        return proceedingJoinPoint.proceed();
     }
 
     @AfterThrowing(pointcut = "service()", throwing = "ex")

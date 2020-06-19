@@ -9,7 +9,9 @@ import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.repositories.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,6 +29,8 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class ProductService {
+
+    private int retryCount = 0;
 
     @Autowired
     private ProductRepository productRepository;
@@ -47,48 +51,48 @@ public class ProductService {
         throw new NoContentException(ConstantVariables.PRODUCT_NO_CONTENT);
     }
 
+    @Retryable(value = {NotFoundException.class}, backoff = @Backoff(delay = 10000L))
     public ProductDTO findById(int id) {
         log.info("Find product by id " + id);
         Optional<Product> productOptional = productRepository.findById(id);
         if (productOptional.isPresent()) {
             return ProductConvert.convertProductToDTO(productOptional.get());
         } else {
+            log.info("Attempting at {} time(s)", ++retryCount);
             throw new NotFoundException(ConstantVariables.PRODUCT_NOT_FOUND);
         }
     }
 
     public ProductDTO addProduct(ProductDTO productDTO) {
         log.info("Create a new product");
-        try {
-            Product productCreate = productRepository.save(ProductConvert.convertProductDTOtoProduct(productDTO));
-            productDTO.setProductId(productCreate.getProductId());
-            log.info("Create a new product success");
-            return productDTO;
-        } catch (Exception e) {
-            log.error("Create product fail");
-            return null;
-        }
+        Product productCreate = productRepository.save(ProductConvert.convertProductDTOtoProduct(productDTO));
+        productDTO.setProductId(productCreate.getProductId());
+        log.info("Create a new product success");
+        return productDTO;
     }
 
     public ProductDTO updateProduct(ProductDTO productDTO, Integer id) {
         log.info("Update product");
-        try {
-            ProductDTO updateProduct = findById(id);
-            Product product = ProductConvert.convertProductDTOtoProduct(productDTO);
-            productRepository.save(product);
-            updateProduct.setProductId(productDTO.getProductId());
+        Optional<Product> productUpdate = productRepository.findById(id);
+        if (productUpdate.isPresent()) {
+            productUpdate.get().setProductId(id);
+            productUpdate.get().setName(productDTO.getProductName());
+            productUpdate.get().setDescription(productDTO.getDescription());
+            productUpdate.get().setImage(productDTO.getImage());
+            productUpdate.get().setPrice(productDTO.getPrice());
+
+            productRepository.save(productUpdate.get());
             log.info("Update product success");
             return productDTO;
-        } catch (Exception e) {
-            log.error("Update product fail");
-            return null;
+        } else {
+            throw new NotFoundException(ConstantVariables.PRODUCT_NOT_FOUND);
         }
     }
 
     public boolean deleteProduct(int id) {
         log.info("Delete product");
         Optional<Product> productOptional = productRepository.findById(id);
-        if (productOptional != null) {
+        if (productOptional.isPresent()) {
             productRepository.delete(productOptional.get());
             return true;
         } else {
