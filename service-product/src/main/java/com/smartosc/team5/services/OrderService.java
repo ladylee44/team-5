@@ -47,22 +47,27 @@ public class OrderService {
     /**
      * Get all order
      */
-    public List<OrderDTO> getAllOrder() {
-        log.info("Get all list order");
+    public List<OrderDTO> getAllOrder() throws NoContentException {
+
         List<Order> orderList = orderRepository.findAll();
-        log.debug("List order {}", orderList);
-        List<OrderDTO> orderDTOList = new ArrayList<>();
-        orderList.forEach(order -> {
-            OrderDTO orderDTO = OrderConvert.convertEntityToDTO(order);
-            orderDTOList.add(orderDTO);
-        });
-        return orderDTOList;
+        if (!orderList.isEmpty()) {
+            log.info("Get all list order");
+            log.debug("List order {}", orderList);
+            List<OrderDTO> orderDTOList = new ArrayList<>();
+            orderList.forEach(order -> {
+                OrderDTO orderDTO = OrderConvert.convertEntityToDTO(order);
+                orderDTOList.add(orderDTO);
+            });
+            return orderDTOList;
+        }
+        log.error("get all fail");
+        throw new NoContentException("Get all fail , list empty!");
     }
 
     /**
      * Find order by id
      */
-    public Optional<OrderDTO> findOderById(Integer id)  throws NotFoundException {
+    public Optional<OrderDTO> findOderById(Integer id) throws NotFoundException {
         Optional<Order> orderOptional = orderRepository.findById(id);
         OrderDTO orderDTO;
         if (orderOptional.isPresent()) {
@@ -80,7 +85,7 @@ public class OrderService {
             return Optional.of(orderDTO);
         } else {
             log.info("find order fail ");
-           throw  new NotFoundException("Order Not found with id"+id);
+            throw new NotFoundException("Order Not found with id" + id);
         }
     }
 
@@ -117,7 +122,7 @@ public class OrderService {
     /**
      * Change order status
      */
-    public Optional<Order> changeOrderStatus(OrderDTO orderDTO) throws NotFoundException{
+    public Optional<Order> changeOrderStatus(OrderDTO orderDTO) throws NotFoundException {
         log.info("change order status");
         Optional<Order> orderOptional = orderRepository.findById(orderDTO.getOrdersId());
         if (orderOptional.isPresent()) {
@@ -142,13 +147,13 @@ public class OrderService {
             }
         }
         log.info("Not found order");
-        throw  new NotFoundException("Not found order with id : "+orderDTO.getOrdersId());
+        throw new NotFoundException("Not found order with id : " + orderDTO.getOrdersId());
     }
 
     /**
      * Update order status
      */
-    public boolean cancelOrderStatus(Integer orderId) {
+    public Order cancelOrderStatus(Integer orderId) throws NotFoundException {
         log.info("cancel order status");
         Optional<Order> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isPresent()) {
@@ -161,9 +166,9 @@ public class OrderService {
             }
             if (orderOptional.get() != null) {
                 orderRepository.save(orderOptional.get());
-                return true;
+                return orderOptional.get();
             }
         }
-        return false;
+        throw new NotFoundException("OrderId not found with id :" + orderId);
     }
 }
