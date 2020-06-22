@@ -10,7 +10,6 @@ import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.entities.Order;
 import com.smartosc.team5.entities.OrderDetail;
 import com.smartosc.team5.entities.Product;
-import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.repositories.OrderDetailRepository;
 import com.smartosc.team5.repositories.OrderRepository;
 import com.smartosc.team5.repositories.ProductRepository;
@@ -21,7 +20,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,10 +38,8 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class OrderServiceTest {
-    //tạo class
     @InjectMocks
     private OrderService orderService;
-    //gọi inject trong class
     @Mock
     private OrderRepository orderRepository;
     @Mock
@@ -53,7 +49,7 @@ public class OrderServiceTest {
 
     @Before
     public void init() {
-        MockitoAnnotations.initMocks(this);
+        //MockitoAnnotations.initMocks(this);
     }
 
     /**
@@ -151,7 +147,7 @@ public class OrderServiceTest {
     /**
      * Test order fail
      */
-    @Test(expected = Exception.class)
+    @Test(expected = NullPointerException.class)
     public void testCreateOrderFail() {
         OrderDTO orderDTO = new OrderDTO();
 
@@ -222,6 +218,17 @@ public class OrderServiceTest {
     }
 
     @Test
+    public void changeOrderStatusFail() {
+        //case 1:
+        when(orderRepository.findById(anyInt())).thenReturn(Optional.empty());
+        OrderDTO orderDTO3 = new OrderDTO();
+       Optional<Order> orderDTO =  orderService.changeOrderStatus(orderDTO3);
+        assertEquals(Optional.empty(), orderDTO);
+
+    }
+
+
+    @Test
     public void testCancelOrderStatus() {
         List<OrderDetail> orderDetailList = new ArrayList<>();
         Order orders = new Order();
@@ -255,9 +262,6 @@ public class OrderServiceTest {
         orders1.setTotalPrice(120.0);
         orders1.setStatus(3);
         orders1.setOrderDetailEntities(orderDetailList);
-
-        when(orderRepository.findById(1)).thenReturn(Optional.of(orders2));
-
         boolean check3 = orderService.cancelOrderStatus(455);
         assertEquals(false, check3);
 

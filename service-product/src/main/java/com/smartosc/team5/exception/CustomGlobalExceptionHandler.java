@@ -47,4 +47,13 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
         return new ResponseEntity<>(errorObject, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(NoContentException.class)
+    public ResponseEntity<ErrorObject> customHandleNoContent(Exception ex, WebRequest request) {
+        ErrorObject errorObject = new ErrorObject();
+        errorObject.setTimestamp(LocalDateTime.now());
+        errorObject.setError(ex.getMessage());
+        errorObject.setStatus(HttpStatus.OK.value());
+        return new ResponseEntity<>(errorObject, HttpStatus.OK);
+    }
 }

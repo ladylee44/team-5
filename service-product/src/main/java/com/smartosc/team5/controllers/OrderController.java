@@ -4,6 +4,7 @@ package com.smartosc.team5.controllers;
 import com.smartosc.team5.constant.ConstantVariables;
 import com.smartosc.team5.dto.APIResponse;
 import com.smartosc.team5.dto.OrderDTO;
+import com.smartosc.team5.entities.Order;
 import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.services.OrderService;
 
@@ -31,8 +32,6 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    private static final String MESSAGE ="Success";
-
 
     /**
      * Get all order
@@ -47,21 +46,20 @@ public class OrderController {
         LOGGER.info("Get all order");
         APIResponse<List<OrderDTO>> listAPIResponse = new APIResponse<>();
         listAPIResponse.setData(orderDTOList);
-        listAPIResponse.setMessage(MESSAGE);
+        listAPIResponse.setMessage(ConstantVariables.SUCCESS);
         listAPIResponse.setStatus(HttpStatus.OK.value());
         return new ResponseEntity<>(listAPIResponse, HttpStatus.OK);
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<Optional<OrderDTO>> getOrderById(@PathVariable("orderId") int orderId){
-
+    public ResponseEntity<APIResponse<Optional<OrderDTO>>> getOrderById(@PathVariable("orderId") int orderId) {
         Optional<OrderDTO> ordersDTO = orderService.findOderById(orderId);
-        if (ordersDTO.isPresent()) {
-            LOGGER.info("Get order by id success:");
-            return new ResponseEntity<>(ordersDTO, HttpStatus.OK);
-        }
-        LOGGER.info("Not found id order");
-        throw new NotFoundException(ConstantVariables.ORDER_NOT_FOUND + orderId);
+        LOGGER.info("Get order by id success:");
+        APIResponse<Optional<OrderDTO>> optionalAPIResponse = new APIResponse<>();
+        optionalAPIResponse.setStatus(HttpStatus.OK.value());
+        optionalAPIResponse.setMessage(ConstantVariables.SUCCESS);
+        optionalAPIResponse.setData(ordersDTO);
+        return new ResponseEntity<>(optionalAPIResponse, HttpStatus.OK);
     }
 
     /**
@@ -77,9 +75,12 @@ public class OrderController {
      * Update order status
      */
     @PutMapping()
-    public ResponseEntity<OrderDTO> changeOrderStatus(@RequestBody OrderDTO orderDTO) {
-        orderService.changeOrderStatus(orderDTO);
-        return new ResponseEntity<>(orderDTO, HttpStatus.OK);
+    public ResponseEntity<APIResponse<Optional<Order>>> changeOrderStatus(@RequestBody OrderDTO orderDTO) {
+        APIResponse<Optional<Order>> apiResponse = new APIResponse();
+        apiResponse.setData(orderService.changeOrderStatus(orderDTO));
+        apiResponse.setMessage(ConstantVariables.SUCCESS);
+        apiResponse.setStatus(HttpStatus.OK.value());
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     /**
@@ -89,9 +90,7 @@ public class OrderController {
     public ResponseEntity<Boolean> cancelOrder(@PathVariable("orderId") Integer orderId) {
         if (orderService.cancelOrderStatus(orderId))
             return new ResponseEntity<>(true, HttpStatus.OK);
-
         throw new NotFoundException("Id not found " + orderId);
-
     }
 
 }

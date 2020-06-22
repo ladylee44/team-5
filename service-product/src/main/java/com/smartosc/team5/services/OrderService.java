@@ -8,6 +8,8 @@ import com.smartosc.team5.dto.OrderdetailDTO;
 import com.smartosc.team5.entities.Order;
 import com.smartosc.team5.entities.OrderDetail;
 import com.smartosc.team5.entities.Product;
+import com.smartosc.team5.exception.NoContentException;
+import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.repositories.OrderDetailRepository;
 import com.smartosc.team5.repositories.OrderRepository;
 import com.smartosc.team5.repositories.ProductRepository;
@@ -60,7 +62,7 @@ public class OrderService {
     /**
      * Find order by id
      */
-    public Optional<OrderDTO> findOderById(Integer id) {
+    public Optional<OrderDTO> findOderById(Integer id)  throws NotFoundException {
         Optional<Order> orderOptional = orderRepository.findById(id);
         OrderDTO orderDTO;
         if (orderOptional.isPresent()) {
@@ -70,7 +72,7 @@ public class OrderService {
             orderDetailList.forEach(orderDetail -> {
                 OrderdetailDTO orderdetailDTO = OrderDetailConvert.convertEntitytoDTO(orderDetail);
                 Product product = orderDetail.getProduct();
-                 ProductConvert.convertProductToDTO(product);
+                ProductConvert.convertProductToDTO(product);
                 orderdetailDTOList.add(orderdetailDTO);
             });
             log.info("find order by id :{}", id);
@@ -78,17 +80,17 @@ public class OrderService {
             return Optional.of(orderDTO);
         } else {
             log.info("find order fail ");
-            return Optional.empty();
+           throw  new NotFoundException("Order Not found with id"+id);
         }
     }
 
     /**
      * Create order
      */
-    public OrderDTO createOrder(OrderDTO orderDTO) {
+    public OrderDTO createOrder(OrderDTO orderDTO) throws NoContentException {
         try {
             Order order = OrderConvert.convertDTOtoEntity(orderDTO);
-             orderRepository.save(order);
+            orderRepository.save(order);
             List<OrderDetail> orderDetailList = new ArrayList<>();
             List<OrderdetailDTO> orderdetailDTOList = orderDTO.getOrderDetailEntities();
             orderdetailDTOList.forEach(orderdetailDTO -> {
@@ -107,7 +109,7 @@ public class OrderService {
             return orderDTO;
         } catch (Exception e) {
             log.error("create fail with error::", e.getMessage());
-            throw new NullPointerException();
+            throw new NoContentException("Please input full");
         }
 
     }
@@ -115,7 +117,7 @@ public class OrderService {
     /**
      * Change order status
      */
-    public void changeOrderStatus(OrderDTO orderDTO) {
+    public Optional<Order> changeOrderStatus(OrderDTO orderDTO) throws NotFoundException{
         log.info("change order status");
         Optional<Order> orderOptional = orderRepository.findById(orderDTO.getOrdersId());
         if (orderOptional.isPresent()) {
@@ -135,9 +137,12 @@ public class OrderService {
             {
                 if (orderOptional.get() != null) {
                     orderRepository.save(orderOptional.get());
+                    return orderOptional;
                 }
             }
         }
+        log.info("Not found order");
+        throw  new NotFoundException("Not found order with id : "+orderDTO.getOrdersId());
     }
 
     /**

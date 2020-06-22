@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @created_by ThaoPhuong
  * @since 12/06/2020
  */
-@ResponseStatus(HttpStatus.NO_CONTENT)
+
 public class NoContentException extends RuntimeException{
     public NoContentException(String message) {
         super(message);

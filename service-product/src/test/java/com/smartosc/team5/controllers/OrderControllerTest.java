@@ -4,6 +4,7 @@ package com.smartosc.team5.controllers;
 import com.smartosc.team5.abstracts.AbstractTest;
 import com.smartosc.team5.dto.OrderDTO;
 import com.smartosc.team5.dto.OrderdetailDTO;
+import com.smartosc.team5.entities.Order;
 import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.repositories.OrderRepository;
 import com.smartosc.team5.services.OrderService;
@@ -29,8 +30,7 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -49,9 +49,6 @@ public class OrderControllerTest {
     private OrderController orderController;
     @Mock
     private OrderService orderService;
-    @Mock
-    private OrderRepository orderRepository;
-
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
@@ -62,27 +59,27 @@ public class OrderControllerTest {
                 .build();
     }
 
-//    @Test
-//    @DisplayName("Test GetAllOrders()")
-//    public void testGetAllOrder() {
-//        List<OrderdetailDTO> orderdetailDTOList1 = new ArrayList<>();
-//        List<OrderdetailDTO> orderdetailDTOList2 = new ArrayList<>();
-//
-//        List<OrderDTO> orderDTOList = Arrays.asList(new OrderDTO(1, 999, orderdetailDTOList1),
-//                new OrderDTO(2, 999, orderdetailDTOList2));
-//
-//        when(orderService.getAllOrder()).thenReturn(orderDTOList);
-//        try {
-//            mockMvc.perform(get("/api/orders"))
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                    .andExpect(jsonPath("$.data.size()", hasSize(orderDTOList.size())));
-//
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    @Test
+    @DisplayName("Test GetAllOrders()")
+    public void testGetAllOrder() {
+        List<OrderdetailDTO> orderdetailDTOList1 = new ArrayList<>();
+        List<OrderdetailDTO> orderdetailDTOList2 = new ArrayList<>();
+
+        List<OrderDTO> orderDTOList = Arrays.asList(new OrderDTO(1, 999, orderdetailDTOList1),
+                new OrderDTO(2, 999, orderdetailDTOList2));
+
+        when(orderService.getAllOrder()).thenReturn(orderDTOList);
+        try {
+            mockMvc.perform(get("/api/orders"))
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.*", hasSize(3)));
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     @DisplayName("Test GetAllOrders False()")
@@ -103,8 +100,8 @@ public class OrderControllerTest {
         mockMvc.perform(get("/api/orders/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.ordersId", is(1)))
-                .andExpect(jsonPath("$.totalPrice", is(123.0)));
+                .andExpect(jsonPath("$.data.ordersId", is(1)))
+                .andExpect(jsonPath("$.data.totalPrice", is(123.0)));
     }
 
     @Test
@@ -149,15 +146,19 @@ public class OrderControllerTest {
         mockMvc.perform(get("/api/orders/cancel/{id}", 999))
                 .andExpect(status().isNotFound());
     }
+//
+//    @Test
+//    public void changeOrderStatus() throws Exception {
+//        List<OrderdetailDTO> orderdetailDTOList1 = new ArrayList<>();
+//        OrderDTO ordersDTO = new OrderDTO();
+//        ordersDTO.setOrdersId(1);
+//        ordersDTO.setTotalPrice(9999);
+//        ordersDTO.setStatus(0);
+//        ordersDTO.setOrderDetailEntities(orderdetailDTOList1);
+//        when(orderService.findOderById(anyInt())).thenReturn(Optional.of(ordersDTO));
+//        when(orderService.changeOrderStatus(any(OrderDTO.class))).thenReturn(Optional.of(Order.class));
+//        mockMvc.perform(put("/api/orders/cancel/{id}", ordersDTO))
+//                .andExpect(status().isNotFound());
+//    }
 
-    @Test
-    public void changeOrderStatus(){
-        List<OrderdetailDTO> orderdetailDTOList1 = new ArrayList<>();
-        OrderDTO ordersDTO = new OrderDTO();
-        ordersDTO.setOrdersId(1);
-        ordersDTO.setTotalPrice(9999);
-        ordersDTO.setStatus(0);
-        ordersDTO.setOrderDetailEntities(orderdetailDTOList1);
-        when(orderService.findOderById(anyInt())).thenReturn(Optional.of(ordersDTO));
-    }
 }

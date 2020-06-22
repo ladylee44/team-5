@@ -15,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -59,9 +60,9 @@ public class ProductServiceTest {
 
     @Test(expected = NoContentException.class)
     public void getAllProductEmptyTestService() {
-        when(productRepository.findAll()).thenReturn(null);
+        when(productRepository.findAll()).thenReturn(new ArrayList<>());
         List<ProductDTO> productDTOList = productService.getAllProducts();
-        assertEquals(null, productDTOList);
+        assertEquals(0, productDTOList.size());
     }
 
     @Test

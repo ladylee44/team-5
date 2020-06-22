@@ -39,7 +39,7 @@ public class ProductService {
         log.info("Get all products");
         List<Product> productList = productRepository.findAll();
         List<ProductDTO> productDTOList = new ArrayList<>();
-        if (productList != null) {
+        if (!productList.isEmpty()) {
             productList.forEach(p -> {
                 ProductDTO productDTO = ProductConvert.convertProductToDTO(p);
                 productDTOList.add(productDTO);

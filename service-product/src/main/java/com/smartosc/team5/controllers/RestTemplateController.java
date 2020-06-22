@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/authenticate")
 public class RestTemplateController {
     @Autowired
-    private RestService restService = new RestServiceImpl();
+    private RestService restService;
 
     @PostMapping()
     public String getToken() {

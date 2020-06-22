@@ -1,6 +1,7 @@
 package com.smartosc.team5.controllers;
 
 import com.smartosc.team5.dto.ProductDTO;
+import com.smartosc.team5.exception.NoContentException;
 import com.smartosc.team5.services.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +39,9 @@ public class ProductController {
      * @return
      */
     @GetMapping
-    public ResponseEntity<List<ProductDTO>> getAllProducts() {
+    public ResponseEntity<List<ProductDTO>> getAllProducts() throws NoContentException {
         List<ProductDTO> productDTOList = productService.getAllProducts();
         log.info("Get all products");
-        if (productDTOList.isEmpty()) {
-            log.info("No product found");
-            return ResponseEntity.noContent().build();
-        }
         log.info("Get all products successfully");
         return ResponseEntity.ok().body(productDTOList);
     }
