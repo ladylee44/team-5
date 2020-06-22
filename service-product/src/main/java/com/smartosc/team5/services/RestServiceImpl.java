@@ -1,5 +1,6 @@
 package com.smartosc.team5.services;
 
+import com.smartosc.team5.exception.RestTemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -26,9 +27,9 @@ public class RestServiceImpl implements RestService{
             if (res.getStatusCodeValue() >= HttpStatus.OK.value() && res.getStatusCodeValue() < HttpStatus.MULTIPLE_CHOICES.value()) {
                 return res.getBody();
             }
-            throw new RestClientException(res.getBody());
+            throw new RestTemplateException(res.getBody());
         } catch (Exception e) {
-            throw new RestClientException(e.getMessage(), e);
+            throw new RestTemplateException(e.getMessage(), e);
         }
 
     }

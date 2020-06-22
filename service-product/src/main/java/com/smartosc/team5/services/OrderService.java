@@ -7,6 +7,7 @@ import com.smartosc.team5.converts.OrderConvert;
 import com.smartosc.team5.dto.OrderdetailDTO;
 import com.smartosc.team5.entities.Order;
 import com.smartosc.team5.entities.OrderDetail;
+import com.smartosc.team5.entities.OrderStatus;
 import com.smartosc.team5.entities.Product;
 import com.smartosc.team5.exception.NoContentException;
 import com.smartosc.team5.exception.NotFoundException;
@@ -112,7 +113,7 @@ public class OrderService {
             log.info("Create order success");
             orderDTO.setOrdersId(order.getOrderId());
             return orderDTO;
-        } catch (Exception e) {
+        } catch (NoContentException e) {
             log.error("create fail with error::", e.getMessage());
             throw new NoContentException("Please input full");
         }
@@ -128,13 +129,13 @@ public class OrderService {
         if (orderOptional.isPresent()) {
             switch (orderDTO.getStatus()) {
                 case 0:
-                    orderOptional.get().setStatus(1);
+                    orderOptional.get().setStatus(OrderStatus.ORDER_PROCESSING.getValue());
                     break;
                 case 1:
-                    orderOptional.get().setStatus(2);
+                    orderOptional.get().setStatus(OrderStatus.ORDER_CONFIRM.getValue());
                     break;
                 case 2:
-                    orderOptional.get().setStatus(3);
+                    orderOptional.get().setStatus(OrderStatus.ORDER_SUCCESS.getValue());
                     break;
                 default:
                     break;
@@ -157,11 +158,11 @@ public class OrderService {
         log.info("cancel order status");
         Optional<Order> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isPresent()) {
-            if (orderOptional.get().getStatus() == 0) {
-                orderOptional.get().setStatus(3);
+            if (orderOptional.get().getStatus() == OrderStatus.ORDER_PROCESSING.getValue()) {
+                orderOptional.get().setStatus(OrderStatus.ORDER_CANCLED.getValue());
                 orderOptional.get().setUpdatedAt(new Date());
-            } else if (orderOptional.get().getStatus() == 3) {
-                orderOptional.get().setStatus(0);
+            } else if (orderOptional.get().getStatus() == OrderStatus.ORDER_CANCLED.getValue()) {
+                orderOptional.get().setStatus(OrderStatus.ORDER_PROCESSING.getValue());
                 orderOptional.get().setUpdatedAt(new Date());
             }
             if (orderOptional.get() != null) {
