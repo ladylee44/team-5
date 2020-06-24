@@ -1,5 +1,6 @@
-package com.smartosc.team5.services;
+package com.smartosc.team5.services.serviceImpl;
 
+import com.smartosc.team5.services.RestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -14,9 +15,14 @@ import org.springframework.web.client.RestTemplate;
  * @created_by Huupd
  */
 @Service
-public class RestServiceImpl implements RestService{
-    @Autowired
+public class RestServiceImpl implements RestService {
+
     private RestTemplate restTemplate;
+
+    @Autowired
+    public RestServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Override
     public String getToken(String url, HttpMethod method, HttpHeaders headers, Object body) {

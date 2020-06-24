@@ -13,12 +13,12 @@ import com.smartosc.team5.entities.Product;
 import com.smartosc.team5.repositories.OrderDetailRepository;
 import com.smartosc.team5.repositories.OrderRepository;
 import com.smartosc.team5.repositories.ProductRepository;
+import com.smartosc.team5.services.serviceImpl.OrderServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
@@ -37,9 +37,9 @@ import static org.mockito.Mockito.*;
  * @created_by Huupd
  */
 @RunWith(MockitoJUnitRunner.class)
-public class OrderServiceTest {
+public class OrderServiceImplTest {
     @InjectMocks
-    private OrderService orderService;
+    private OrderServiceImpl orderService;
     @Mock
     private OrderRepository orderRepository;
     @Mock

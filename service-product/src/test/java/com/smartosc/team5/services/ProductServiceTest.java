@@ -3,9 +3,11 @@ package com.smartosc.team5.services;
 import com.smartosc.team5.converts.ProductConvert;
 import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.entities.Product;
+import com.smartosc.team5.exception.ExistException;
 import com.smartosc.team5.exception.NoContentException;
 import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.repositories.ProductRepository;
+import com.smartosc.team5.services.serviceImpl.ProductServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,7 +39,7 @@ import static org.mockito.Mockito.when;
 public class ProductServiceTest {
     @InjectMocks
     //mock a class or interface
-            ProductService productService;
+            ProductServiceImpl productService;
 
     /**
      * Đối tượng Repository sẽ được mock, chứ không phải bean trong context
@@ -87,11 +89,9 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void createProductSuccessTestService() {
+    public void  createProductSuccessTestService() {
         ProductDTO productDTO = new ProductDTO();
-        productDTO.setProductName("Product 1");
-        productDTO.setDescription("Product Test");
-        productDTO.setImage("Product image");
+        productDTO.setProductName("Thao Xinh Dep");
         productDTO.setPrice(123);
         when(productRepository.save(any(Product.class))).then((Answer<Product>) productAnswer -> {
             Product product1 = (Product) productAnswer.getArguments()[0];
@@ -107,9 +107,10 @@ public class ProductServiceTest {
     @Test
     public void createProductFailTestService() {
         ProductDTO productDTO = new ProductDTO();
-        when(productRepository.save(any(Product.class))).thenReturn(null);
-        ProductDTO productCreate = productService.addProduct(productDTO);
-        assertEquals(null, productCreate);
+        when(productRepository.findByName(any())).thenThrow(ExistException.class);
+        assertThrows(ExistException.class, () -> {
+            productService.addProduct(productDTO);
+        });
     }
 
     @Test

@@ -3,7 +3,7 @@ package com.smartosc.team5.controllers;
 import com.smartosc.team5.abstracts.AbstractTest;
 import com.smartosc.team5.dto.ProductDTO;
 import com.smartosc.team5.exception.NotFoundException;
-import com.smartosc.team5.services.ProductService;
+import com.smartosc.team5.services.serviceImpl.ProductServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,55 +39,51 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(value = ProductControllerTest.class)
 public class ProductControllerTest {
+
     private MockMvc mockMvc;
 
     @InjectMocks
     private ProductController productController;
 
     @Mock
-    private ProductService productService;
+    private ProductServiceImpl productService;
+
+    private List<ProductDTO> productDTOList;
+
+    private ProductDTO productDTO;
 
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
+
+        productDTO = new ProductDTO(1, "product", "product", "image", 123);
+
+        productDTOList = new ArrayList<>();
+        productDTOList = Arrays.asList(new ProductDTO(), new ProductDTO());
+
         mockMvc = MockMvcBuilders
                 .standaloneSetup(productController)
+                .setControllerAdvice(new Exception())
                 .addFilter(new CORSFilter())
                 .build();
     }
 
     @Test
     public void getAllProductSuccessTest() throws Exception {
-        List<ProductDTO> productDTOList = Arrays.asList(new ProductDTO(), new ProductDTO());
         when(productService.getAllProducts()).thenReturn(productDTOList);
         mockMvc.perform(get("/api/products"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andDo(MockMvcResultHandlers.log());
-    }
-
-    @Test
-    public void getAllProductFailTest() throws Exception {
-        when(productService.getAllProducts()).thenReturn(null);
-        mockMvc.perform(get("/api/products"))
-                .andExpect(status().isNoContent())
-                .andDo(MockMvcResultHandlers.log());
+                .andExpect(jsonPath("$.data", hasSize(2)));
     }
 
     @Test
     public void findByIdSuccessTest() throws Exception {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setProductId(1);
-        productDTO.setProductName("Product name");
-        productDTO.setDescription("Product Description");
-        productDTO.setImage("Product image");
-        productDTO.setPrice(123);
         when(productService.findById(anyInt())).thenReturn(productDTO);
         mockMvc.perform(get("/api/products/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.productId").value(1))
+                .andExpect(jsonPath("$.data.productId").value(1))
                 .andDo(MockMvcResultHandlers.log());
     }
 
@@ -100,8 +97,6 @@ public class ProductControllerTest {
 
     @Test
     public void addProductSuccessTest() throws Exception {
-        ProductDTO productDTO = new ProductDTO(1, "product", "product", "image", 123);
-
         when(productService.addProduct(any(ProductDTO.class))).thenReturn(productDTO);
 //        convert the Java object into JSON string
         mockMvc.perform(post("/api/products").contentType(MediaType.APPLICATION_JSON)
@@ -121,8 +116,6 @@ public class ProductControllerTest {
 
     @Test
     public void updateProductSuccessTest() throws Exception {
-        ProductDTO productDTO = new ProductDTO(1, "product", "product", "image", 123);
-
         when(productService.findById(anyInt())).thenReturn(productDTO);
         when(productService.updateProduct(productDTO, productDTO.getProductId())).thenReturn(productDTO);
 
@@ -134,28 +127,12 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void updateProductFailTest() throws Exception {
-        when(productService.findById(anyInt())).thenThrow(NotFoundException.class);
-        mockMvc.perform(put("/api/products/{id}", 2))
-                .andExpect(status().isNotFound())
-                .andDo(MockMvcResultHandlers.log());
-    }
-
-    @Test
     public void deleteProductSuccessTest() throws Exception {
-        ProductDTO productDTO = new ProductDTO(1, "product", "product", "image", 123);
         when(productService.findById(anyInt())).thenReturn(productDTO);
         when(productService.deleteProduct(productDTO.getProductId())).thenReturn(false);
 
         mockMvc.perform(delete("/api/products/{id}", productDTO.getProductId()))
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.log());
-    }
-
-    @Test
-    public void deleteProductFailTest() throws Exception {
-        when(productService.findById(anyInt())).thenThrow(NotFoundException.class);
-        mockMvc.perform(delete("/api/products/{id}",2))
-                .andExpect(status().isNotFound());
     }
 }

@@ -1,10 +1,15 @@
 package com.smartosc.team5.controllers;
 
+import com.smartosc.team5.dto.APIResponse;
 import com.smartosc.team5.dto.ProductDTO;
+import com.smartosc.team5.exception.ExistException;
 import com.smartosc.team5.exception.NoContentException;
+import com.smartosc.team5.exception.NotFoundException;
 import com.smartosc.team5.services.ProductService;
+import com.smartosc.team5.services.serviceImpl.ProductServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,21 +34,23 @@ public class ProductController {
     private ProductService productService;
 
     @Autowired
-    public ProductController(ProductService productService) {
+    public ProductController(ProductServiceImpl productService) {
         this.productService = productService;
     }
 
+    APIResponse apiResponse = new APIResponse();
+
     /**
      * get all product
-     *
-     * @return
      */
     @GetMapping
-    public ResponseEntity<List<ProductDTO>> getAllProducts() throws NoContentException {
+    public ResponseEntity<APIResponse<List<ProductDTO>>> getAllProducts() {
         List<ProductDTO> productDTOList = productService.getAllProducts();
         log.info("Get all products");
-        log.info("Get all products successfully");
-        return ResponseEntity.ok().body(productDTOList);
+        apiResponse.setData(productDTOList);
+        apiResponse.setMessage("Get all products");
+        apiResponse.setStatus(HttpStatus.OK.value());
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     /**
@@ -53,17 +60,13 @@ public class ProductController {
      * @return
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> findProductById(@PathVariable(value = "id") Integer id) {
+    public ResponseEntity<APIResponse<ProductDTO>> findProductById(@PathVariable(value = "id") Integer id) throws NotFoundException {
         log.info("Find product by id " + id);
         ProductDTO productDTO = productService.findById(id);
-        return ResponseEntity.ok().body(productDTO);
-//        if (productDTO == null) {
-//            log.error("Product not found");
-//            throw new NotFoundException(ConstantVariables.PRODUCT_NOT_FOUND + id);
-//        } else {
-//            log.info("Find product by id successfully");
-//            return ResponseEntity.ok().body(productDTO);
-//        }
+        apiResponse.setData(productDTO);
+        apiResponse.setMessage("Find product by id " + id);
+        apiResponse.setStatus(HttpStatus.OK.value());
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     /**
@@ -73,11 +76,14 @@ public class ProductController {
      * @return
      */
     @PostMapping
-    public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO productDTO) {
+    public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO productDTO) throws ExistException {
         log.info("Create new product");
         ProductDTO productCreate = productService.addProduct(productDTO);
+        apiResponse.setMessage("Create new product");
+        apiResponse.setData(productCreate);
+        apiResponse.setStatus(HttpStatus.OK.value());
         log.info("Create new product successfully");
-        return ResponseEntity.ok().body(productCreate);
+        return new ResponseEntity(apiResponse, HttpStatus.OK);
     }
 
     /**
@@ -88,11 +94,15 @@ public class ProductController {
      * @return
      */
     @PutMapping("/{id}")
-    public ResponseEntity<ProductDTO> updateProduct(@Valid @RequestBody ProductDTO productDTO, @PathVariable(value = "id") int id) {
+    public ResponseEntity<ProductDTO> updateProduct(@Valid @RequestBody ProductDTO productDTO,
+                                                    @PathVariable(value = "id") int id) throws ExistException, NotFoundException {
         log.info("Update product id " + id);
         ProductDTO updateProduct = productService.updateProduct(productDTO, id);
+        apiResponse.setStatus(HttpStatus.OK.value());
+        apiResponse.setMessage("Update product id " + id + " successfully");
+        apiResponse.setData(updateProduct);
         log.info("Update product id " + id + " successfully");
-        return ResponseEntity.ok(updateProduct);
+        return new ResponseEntity(apiResponse, HttpStatus.OK);
     }
 
     /**
@@ -102,15 +112,12 @@ public class ProductController {
      * @return
      */
     @DeleteMapping("/{id}")
-
-    public ResponseEntity<String> deleteProduct(@PathVariable(value = "id") Integer id) {
+    public ResponseEntity<Boolean> deleteProduct(@PathVariable(value = "id") Integer id) throws NotFoundException {
         log.info("Delete product id " + id);
-        if (productService.findById(id) == null) {
-            return null;
-        } else {
-            productService.deleteProduct(id);
-            log.info("Delete product successfully");
-            return ResponseEntity.ok().body("Delete successfully");
-        }
+        productService.deleteProduct(id);
+        apiResponse.setMessage("Delete product id " + id + " successfully");
+        apiResponse.setStatus(HttpStatus.OK.value());
+        log.info("Delete product successfully");
+        return new ResponseEntity(apiResponse, HttpStatus.OK);
     }
 }

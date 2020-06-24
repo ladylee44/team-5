@@ -17,8 +17,12 @@ import java.util.List;
  */
 @Service
 public class ApiLogService {
-    @Autowired
     private ApiLogRepository apiLogRepository;
+
+    @Autowired
+    public ApiLogService(ApiLogRepository apiLogRepository) {
+        this.apiLogRepository = apiLogRepository;
+    }
 
     public List<ApiLog> apiLogs() {
         return apiLogRepository.findAll();

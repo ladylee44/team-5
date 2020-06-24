@@ -4,10 +4,7 @@ package com.smartosc.team5.controllers;
 import com.smartosc.team5.abstracts.AbstractTest;
 import com.smartosc.team5.dto.OrderDTO;
 import com.smartosc.team5.dto.OrderdetailDTO;
-import com.smartosc.team5.entities.Order;
-import com.smartosc.team5.exception.NotFoundException;
-import com.smartosc.team5.repositories.OrderRepository;
-import com.smartosc.team5.services.OrderService;
+import com.smartosc.team5.services.serviceImpl.OrderServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -48,7 +45,7 @@ public class OrderControllerTest {
     @InjectMocks
     private OrderController orderController;
     @Mock
-    private OrderService orderService;
+    private OrderServiceImpl orderService;
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);

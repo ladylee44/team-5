@@ -2,7 +2,6 @@ package com.smartosc.team5.controllers;
 
 import com.smartosc.team5.dto.JwtRequest;
 import com.smartosc.team5.services.RestService;
-import com.smartosc.team5.services.RestServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;

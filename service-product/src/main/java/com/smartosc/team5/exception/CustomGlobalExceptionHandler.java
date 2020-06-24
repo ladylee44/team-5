@@ -56,4 +56,14 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         errorObject.setStatus(HttpStatus.OK.value());
         return new ResponseEntity<>(errorObject, HttpStatus.OK);
     }
+
+    @ExceptionHandler(ExistException.class)
+    public ResponseEntity<ErrorObject> customHandleExist(Exception ex, WebRequest request) {
+        ErrorObject errorObject = new ErrorObject();
+        errorObject.setTimestamp(LocalDateTime.now());
+        errorObject.setError(ex.getMessage());
+        errorObject.setStatus(HttpStatus.OK.value());
+        return new ResponseEntity<>(errorObject, HttpStatus.OK);
+    }
+
 }
