@@ -5,9 +5,8 @@ import com.smartosc.team5.constant.ConstantVariables;
 import com.smartosc.team5.dto.APIResponse;
 import com.smartosc.team5.dto.OrderDTO;
 import com.smartosc.team5.entities.Order;
-import com.smartosc.team5.exception.NotFoundException;
-import com.smartosc.team5.services.serviceImpl.OrderServiceImpl;
 
+import com.smartosc.team5.services.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +28,13 @@ import java.util.Optional;
 @RequestMapping("/api/orders")
 public class OrderController {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderController.class);
-    @Autowired
-    private OrderServiceImpl orderService;
 
+    private OrderService orderService;
+
+    @Autowired
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     /**
      * Get all order
@@ -39,10 +42,6 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<APIResponse<List<OrderDTO>>> getAllOrder() {
         List<OrderDTO> orderDTOList = orderService.getAllOrder();
-        if (orderDTOList.isEmpty()) {
-            LOGGER.info("Not found orders");
-            return ResponseEntity.noContent().build();
-        }
         LOGGER.info("Get all order");
         APIResponse<List<OrderDTO>> listAPIResponse = new APIResponse<>();
         listAPIResponse.setData(orderDTOList);
@@ -66,9 +65,12 @@ public class OrderController {
      * Create new order
      */
     @PostMapping()
-    public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO) {
-        orderService.createOrder(orderDTO);
-        return new ResponseEntity<>(orderDTO, HttpStatus.OK);
+    public ResponseEntity<APIResponse<OrderDTO>> createOrder(@RequestBody OrderDTO orderDTO) {
+        APIResponse<OrderDTO> orderAPIResponse = new APIResponse<>();
+        orderAPIResponse.setData(orderService.createOrder(orderDTO));
+        orderAPIResponse.setMessage(ConstantVariables.SUCCESS);
+        orderAPIResponse.setStatus(HttpStatus.OK.value());
+        return new ResponseEntity<>(orderAPIResponse, HttpStatus.OK);
     }
 
     /**
@@ -76,7 +78,7 @@ public class OrderController {
      */
     @PutMapping()
     public ResponseEntity<APIResponse<Optional<Order>>> changeOrderStatus(@RequestBody OrderDTO orderDTO) {
-        APIResponse<Optional<Order>> apiResponse = new APIResponse();
+        APIResponse<Optional<Order>> apiResponse = new APIResponse<>();
         apiResponse.setData(orderService.changeOrderStatus(orderDTO));
         apiResponse.setMessage(ConstantVariables.SUCCESS);
         apiResponse.setStatus(HttpStatus.OK.value());
@@ -87,10 +89,12 @@ public class OrderController {
      * Cancel order
      */
     @GetMapping("/cancel/{orderId}")
-    public ResponseEntity<Boolean> cancelOrder(@PathVariable("orderId") Integer orderId) {
-        if (orderService.cancelOrderStatus(orderId))
-            return new ResponseEntity<>(true, HttpStatus.OK);
-        throw new NotFoundException("Id not found " + orderId);
+    public ResponseEntity<APIResponse<Order>> cancelOrder(@PathVariable("orderId") Integer orderId) {
+        APIResponse<Order> orderAPIResponse = new APIResponse<>();
+        orderAPIResponse.setData(orderService.cancelOrderStatus(orderId));
+        orderAPIResponse.setMessage(ConstantVariables.SUCCESS);
+        orderAPIResponse.setStatus(HttpStatus.OK.value());
+        return new ResponseEntity<>(orderAPIResponse, HttpStatus.OK);
     }
 
 }
